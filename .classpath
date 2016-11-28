@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="res"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6">
+		<attributes>
+			<attribute name="owner.project.facets" value="java"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/jfinal_demo3/jar/1.1.3/commons-logging-1.1.3.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/jfinal_demo3/jar/1.6/commons-codec-1.6.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/jfinal_demo3/jar/4.3.2/httpcore-4.3.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/jfinal_demo3/jar/4.3.5/httpclient-4.3.5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/jfinal_demo3/jar/20090211/json-20090211.jar"/>
+	<classpathentry kind="output" path="WebRoot/WEB-INF/classes"/>
+</classpath>
