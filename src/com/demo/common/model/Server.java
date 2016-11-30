@@ -9,6 +9,7 @@ import com.jfinal.plugin.activerecord.Page;
 @SuppressWarnings("serial")
 public class Server extends BaseServer<Server> {
 	public static final Server dao = new Server();
+	
 	public Page<Server> paginate(int pageNumber, int pageSize) {
 		return paginate(pageNumber, pageSize, "select *", "from server order by id asc");
 	}
