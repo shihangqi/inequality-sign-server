@@ -12,6 +12,8 @@ import com.demo.common.model.Server;
 import com.demo.common.model.User;
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
+import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
 
 /**
  * ServerController 所有 sql 与业务逻辑写在 Model 或 Service 中，不要写在 Controller
@@ -48,56 +50,24 @@ public class ServerController extends Controller {
 		redirect("/server");
 	}
 
+	//查询周排行的商家名单
 	public void list() {
 		JSONArray json = new JSONArray();
-		//查询shop名称，根据周排行大小排列
-		List<Server> list1 = Server.dao.find("select * from user where id = 1 or id = 2");
-		List<User> list2 = User.dao.find("select * from user where id = 1 or id = 2");
-		if (!(list1.isEmpty() || list2.isEmpty())) {
-			for (int i = 0; i < list1.size(); i++) {
-				JSONObject j = new JSONObject();
-
-				try {
-					j.put("shopname", list1.get(i).getServerName());
-					j.put("num", list2.get(i).getUserId());
-					json.put(j);
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		} else {
-			renderText("inquiryfail");
+		List<Record> R = Db.find("select server_id, count(server_id)from ordertabgroup by server_id");
+		for (int i = 0; i < R.size(); i++) {
+			System.out.println(R.get(i).getColumns());
+			json.put(R.get(i).getColumns());
 		}
+		System.out.println(json.toString());
 		renderJson(json);
 	}
 
 	public void comment() {
 		JSONArray json = new JSONArray();
-
-		List<User> list1 = User.dao.find("select * from user where id = 1 or id = 2");
-		List<User> list2 = User.dao.find("select * from user where id = 1 or id = 2");
-		List<User> list3 = User.dao.find("select * from user where id = 1 or id = 2");
-		List<User> list4 = User.dao.find("select * from user where id = 1 or id = 2");
-		List<User> list5 = User.dao.find("select * from user where id = 1 or id = 2");
-		if (!(list1.isEmpty() || list2.isEmpty() || list3.isEmpty() || list4.isEmpty() || list5.isEmpty())) {
-		for (int i = 0; i < list1.size(); i++) {
-			JSONObject j = new JSONObject();
-
-			try {
-				j.put("user_name", list1.get(i).getUserName());
-				j.put("star", list2.get(i).getUserId());
-				j.put("time", list3.get(i).getUserId());
-				j.put("content", list4.get(i).getUserId());
-				j.put("shop_name", list5.get(i).getUserId());
-				json.put(j);
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		} else {
-			renderText("inquiryfail");
+		List<Record> R = Db.find("select user_name,star,time,content, server_name from comment,user,server where comment.user_id = user.id and comment.server_id = server.id order by time DESC");
+		for (int i = 0; i < R.size(); i++) {
+			System.out.println(R.get(i).getColumns());
+			json.put(R.get(i).getColumns());
 		}
 		System.out.println(json.toString());
 		renderJson(json);
@@ -105,24 +75,10 @@ public class ServerController extends Controller {
 	
 	public void scene() {
 		JSONArray json = new JSONArray();
-
-		List<User> list1 = User.dao.find("select * from user where id = 1 or id = 2");
-		List<User> list2 = User.dao.find("select * from user where id = 1 or id = 2");
-		if (!(list1.isEmpty() || list2.isEmpty())) {
-			for (int i = 0; i < list1.size(); i++) {
-				JSONObject j = new JSONObject();
-
-				try {
-					j.put("url", list1.get(i).getUserName());
-					j.put("content", list2.get(i).getUserId());
-					json.put(j);
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		} else {
-			renderText("inquiryfail");
+		List<Record> R = Db.find("select server_id, count(server_id)from ordertabgroup by server_id");
+		for (int i = 0; i < R.size(); i++) {
+			System.out.println(R.get(i).getColumns());
+			json.put(R.get(i).getColumns());
 		}
 		System.out.println(json.toString());
 		renderJson(json);
@@ -143,34 +99,27 @@ public class ServerController extends Controller {
 	}
 	public void home(){
 		JSONArray json = new JSONArray();
-
-		List<User> list1 = User.dao.find("select * from user where id = 1 or id = 2");
-		List<User> list2 = User.dao.find("select * from user where id = 1 or id = 2");
-		List<User> list3 = User.dao.find("select * from user where id = 1 or id = 2");
-		if (!(list1.isEmpty() || list2.isEmpty())) {
-			for (int i = 0; i < 4; i++) {
-				JSONObject j = new JSONObject();
-
-				try {
-					j.put("shop_name", list1.get(i).getUserName());
-					j.put("content", list2.get(i).getUserId());
-					j.put("img",list3.get(i).getUserImg());
-					json.put(j);
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		} else {
-			renderText("homefail");
+		List<Record> R = Db.find("select server_id, count(server_id)from ordertabgroup by server_id");
+		for (int i = 0; i < R.size(); i++) {
+			System.out.println(R.get(i).getColumns());
+			json.put(R.get(i).getColumns());
 		}
 		System.out.println(json.toString());
 		renderJson(json);
 	}
+	
 	public void changelocale(){
 		HttpServletRequest r = getRequest();
 		String city = r.getParameter("city");
+		JSONArray json = new JSONArray();
 		
+		List<Record> R = Db.find("select shop_name,num from ordertab, shop where shop.id = ordertab.shop_id and ordertab.user_id =");
+		for (int i = 0; i < R.size(); i++) {
+			System.out.println(R.get(i).getColumns());
+			json.put(R.get(i).getColumns());
+		}
+		System.out.println(json.toString());
+		renderJson(json);
 	}
 	public void search(){
 		HttpServletRequest r = getRequest();

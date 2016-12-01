@@ -25,12 +25,12 @@ public abstract class BaseOrdertab<M extends BaseOrdertab<M>> extends Model<M> i
 		return get("user_id");
 	}
 
-	public void setServerId(java.lang.Integer serverId) {
-		set("server_id", serverId);
+	public void setShopId(java.lang.Integer shopId) {
+		set("shop_id", shopId);
 	}
 
-	public java.lang.Integer getServerId() {
-		return get("server_id");
+	public java.lang.Integer getShopId() {
+		return get("shop_id");
 	}
 
 	public void setTime(java.lang.String time) {

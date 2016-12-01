@@ -2,12 +2,14 @@ package com.demo.user;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Attr;
 
 import com.demo.common.model.Ordertab;
 import com.demo.common.model.Server;
@@ -15,6 +17,8 @@ import com.demo.common.model.User;
 import com.demo.push.Push;
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
+import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
 
 /**
  * UserController 所有 sql 与业务逻辑写在 Model 或 Service 中，不要写在 Controller
@@ -217,26 +221,11 @@ public class UserController extends Controller {
 		HttpServletRequest r = getRequest();
 		String id = r.getParameter("id");
 		JSONArray json = new JSONArray();
-
-		//根据id查询订单的商家名称，按时间先后顺序排列
-		List<Server> list1 = Server.dao.find("select * from user where id = 1");
-		//根据id查询订单的所拍号，按时间先后顺序排列
-		List<Ordertab> list2 = Ordertab.dao.find("select * from user where id = 2");
-		if (!(list1.isEmpty() || list2.isEmpty()))
-			for (int i = 0; i < list1.size(); i++) {
-				JSONObject j = new JSONObject();
-
-				try {
-					j.put("shopname", list1.get(i).getServerName());
-					j.put("num", list2.get(i).getNum());
-					json.put(j);
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		else {
-			renderText("inquiryfail");
+		
+		List<Record> R = Db.find("select shop_name,num from ordertab, shop where shop.id = ordertab.shop_id and ordertab.user_id ="+id);
+		for (int i = 0; i < R.size(); i++) {
+			System.out.println(R.get(i).getColumns());
+			json.put(R.get(i).getColumns());
 		}
 		System.out.println(json.toString());
 		renderJson(json);

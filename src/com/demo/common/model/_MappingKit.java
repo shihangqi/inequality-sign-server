@@ -19,7 +19,7 @@ public class _MappingKit {
 		arp.addMapping("blog", "id", Blog.class);
 		arp.addMapping("ordernum", "server_id", Ordernum.class);
 		arp.addMapping("ordertab", "id", Ordertab.class);
-		arp.addMapping("server", "id", Server.class);
+		arp.addMapping("shop", "id", Shop.class);
 		arp.addMapping("user", "id", User.class);
 	}
 }
