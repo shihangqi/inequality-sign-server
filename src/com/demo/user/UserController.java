@@ -9,6 +9,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.demo.common.model.Ordertab;
+import com.demo.common.model.Server;
 import com.demo.common.model.User;
 import com.demo.push.Push;
 import com.jfinal.aop.Before;
@@ -216,15 +218,17 @@ public class UserController extends Controller {
 		String id = r.getParameter("id");
 		JSONArray json = new JSONArray();
 
-		List<User> list1 = User.dao.find("select * from user where id = 1");
-		List<User> list2 = User.dao.find("select * from user where id = 2");
+		//根据id查询订单的商家名称，按时间先后顺序排列
+		List<Server> list1 = Server.dao.find("select * from user where id = 1");
+		//根据id查询订单的所拍号，按时间先后顺序排列
+		List<Ordertab> list2 = Ordertab.dao.find("select * from user where id = 2");
 		if (!(list1.isEmpty() || list2.isEmpty()))
 			for (int i = 0; i < list1.size(); i++) {
 				JSONObject j = new JSONObject();
 
 				try {
-					j.put("shopname", list1.get(i).getUserName());
-					j.put("num", list2.get(i).getUserId());
+					j.put("shopname", list1.get(i).getServerName());
+					j.put("num", list2.get(i).getNum());
 					json.put(j);
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block

@@ -50,15 +50,15 @@ public class ServerController extends Controller {
 
 	public void list() {
 		JSONArray json = new JSONArray();
-
-		List<User> list1 = User.dao.find("select * from user where id = 1 or id = 2");
+		//查询shop名称，根据周排行大小排列
+		List<Server> list1 = Server.dao.find("select * from user where id = 1 or id = 2");
 		List<User> list2 = User.dao.find("select * from user where id = 1 or id = 2");
 		if (!(list1.isEmpty() || list2.isEmpty())) {
 			for (int i = 0; i < list1.size(); i++) {
 				JSONObject j = new JSONObject();
 
 				try {
-					j.put("shopname", list1.get(i).getUserName());
+					j.put("shopname", list1.get(i).getServerName());
 					j.put("num", list2.get(i).getUserId());
 					json.put(j);
 				} catch (JSONException e) {
@@ -168,6 +168,8 @@ public class ServerController extends Controller {
 		renderJson(json);
 	}
 	public void changelocale(){
+		HttpServletRequest r = getRequest();
+		String city = r.getParameter("city");
 		
 	}
 	public void search(){
