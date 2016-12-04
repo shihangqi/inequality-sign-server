@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.demo.common.model.Scene;
 import com.demo.common.model.Server;
 import com.demo.common.model.User;
 import com.jfinal.aop.Before;
@@ -53,188 +54,195 @@ public class ServerController extends Controller {
 	//查询周排行的商家名单
 	public void list() {
 		JSONArray json = new JSONArray();
-		List<Record> R = Db.find("select server_id, count(server_id)from ordertabgroup by server_id");
-		for (int i = 0; i < R.size(); i++) {
-			System.out.println(R.get(i).getColumns());
-			json.put(R.get(i).getColumns());
+		List<Record> R = Db.find("select shop_id, count(shop_id)from ordertab group by shop_id");
+		if(R == null){
+			renderText("listfail");
+		}else{
+			for (int i = 0; i < R.size(); i++) {
+				System.out.println(R.get(i).getColumns());
+				json.put(R.get(i).getColumns());
+			}
+			System.out.println(json.toString());
+			renderJson(json);
 		}
-		System.out.println(json.toString());
-		renderJson(json);
 	}
-
+	//查询评论内容页
 	public void comment() {
 		JSONArray json = new JSONArray();
-		List<Record> R = Db.find("select user_name,star,time,content, server_name from comment,user,server where comment.user_id = user.id and comment.server_id = server.id order by time DESC");
-		for (int i = 0; i < R.size(); i++) {
-			System.out.println(R.get(i).getColumns());
-			json.put(R.get(i).getColumns());
+		List<Record> R = Db.find("select user_name,star,time,content,shop_name from comment,user,shop where comment.user_id = user.id and comment.shop_id = shop.id order by time DESC");
+		if(R == null){
+			renderText("commentfail");
+		}else{
+			for (int i = 0; i < R.size(); i++) {
+				System.out.println(R.get(i).getColumns());
+				json.put(R.get(i).getColumns());
+			}
+			System.out.println(json.toString());
+			renderJson(json);
 		}
-		System.out.println(json.toString());
-		renderJson(json);
 	}
 	
+	//返回场景中的12个场景
 	public void scene() {
 		JSONArray json = new JSONArray();
-		List<Record> R = Db.find("select server_id, count(server_id)from ordertabgroup by server_id");
-		for (int i = 0; i < R.size(); i++) {
-			System.out.println(R.get(i).getColumns());
-			json.put(R.get(i).getColumns());
-		}
-		System.out.println(json.toString());
-		renderJson(json);
-	}
+		List<Record> R = Db.find("select img,content from scene");
+		if (R == null) {
+			renderText("scenefail");
+		} else {
+			if (R.size() <= 12) {
+				for (int i = 0; i < R.size(); i++) {
+					System.out.println(R.get(i).getColumns());
+					json.put(R.get(i).getColumns());
+				}
+			} else {
+				for (int i = 0; i < 12; i++) {
+					System.out.println(R.get(i).getColumns());
+					json.put(R.get(i).getColumns());
+				}
 
+			}
+			System.out.println(json.toString());
+			renderJson(json);
+		}
+	}
+	//根据上传的图片地址，修改数据库中的数据
 	public void uploadscene() {
 		HttpServletRequest r = getRequest();
 		String scene_img = r.getParameter("scene_img");
-		List<User> list = User.dao.find("select * from user");
-		User u = list.get(0);
-		u.setUserImg(scene_img);
-		boolean b = u.update();
+		String scene_content = r.getParameter("scene_content");
+		
+		Scene s = new Scene();
+		s.setImg(scene_img);
+		s.setContent(scene_content);
+		boolean b = s.save();
+		
 		if (b == true) {
 			renderText("uploadsceneok");
 		} else {
 			renderText("uploadscenefail");
 		}
 	}
+	//返回列表页
 	public void home(){
-		JSONArray json = new JSONArray();
-		List<Record> R = Db.find("select server_id, count(server_id)from ordertabgroup by server_id");
-		for (int i = 0; i < R.size(); i++) {
-			System.out.println(R.get(i).getColumns());
-			json.put(R.get(i).getColumns());
-		}
-		System.out.println(json.toString());
-		renderJson(json);
-	}
-	
-	public void changelocale(){
 		HttpServletRequest r = getRequest();
 		String city = r.getParameter("city");
 		JSONArray json = new JSONArray();
 		
-		List<Record> R = Db.find("select shop_name,num from ordertab, shop where shop.id = ordertab.shop_id and ordertab.user_id =");
-		for (int i = 0; i < R.size(); i++) {
-			System.out.println(R.get(i).getColumns());
-			json.put(R.get(i).getColumns());
+		List<Record> R = Db.find("");
+		
+		if(R == null){
+			renderText("homefail");
+		}else{
+			for (int i = 0; i < 4; i++) {
+				System.out.println(R.get(i).getColumns());
+				json.put(R.get(i).getColumns());
+			}
+			System.out.println(json.toString());
+			renderJson(json);
 		}
-		System.out.println(json.toString());
-		renderJson(json);
 	}
+	
+	//改变地址这点再想想，计划是改变地址只在商家端有，在客户端只存本地，每次上传的时候上传上城市信息，查找时查商家端的城市信息；
+	
+	
+//	public void changelocale(){
+//		HttpServletRequest r = getRequest();
+//		String city = r.getParameter("city");
+//		JSONArray json = new JSONArray();
+//		
+//		List<Record> R = Db.find("");
+//		for (int i = 0; i < R.size(); i++) {
+//			System.out.println(R.get(i).getColumns());
+//			json.put(R.get(i).getColumns());
+//		}
+//		System.out.println(json.toString());
+//		renderJson(json);
+//	}
+	//搜索功能
 	public void search(){
 		HttpServletRequest r = getRequest();
 		String content = r.getParameter("content");
-		
-	}
-	public void line_dining(){
 		JSONArray json = new JSONArray();
-
-		List<User> list1 = User.dao.find("select * from user where id = 1 or id = 2");
-		List<User> list2 = User.dao.find("select * from user where id = 1 or id = 2");
-		List<User> list3 = User.dao.find("select * from user where id = 1 or id = 2");
-		if (!(list1.isEmpty() || list2.isEmpty())) {
-			for (int i = 0; i < 10; i++) {
-				JSONObject j = new JSONObject();
-
-				try {
-					j.put("shop_name", list1.get(i).getUserName());
-					j.put("content", list2.get(i).getUserId());
-					j.put("img",list3.get(i).getUserImg());
-					json.put(j);
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		} else {
-			renderText("diningfail");
+		
+		List<Record> R = Db.find("");
+		
+		if(R == null){
+			renderText("searchfail");
+		}else{
+			json.put(R.get(0).getColumns());
+			renderJson(json);
 		}
-		System.out.println(json.toString());
-		renderJson(json);
 	}
 	
-	public void line_hall(){
+	public void line_dining(){
+		JSONArray json = new JSONArray();
+		
+		List<Record> R = Db.find("");
+		
+		if(R == null){
+			renderText("diningfail");
+		}else{
+			for (int i = 0; i <R.size(); i++) {
+				System.out.println(R.get(i).getColumns());
+				json.put(R.get(i).getColumns());
+			}
+			System.out.println(json.toString());
+			renderJson(json);
+		}
+	}
+	
+	public void line_hall() {
 		JSONArray json = new JSONArray();
 
-		List<User> list1 = User.dao.find("select * from user where id = 1 or id = 2");
-		List<User> list2 = User.dao.find("select * from user where id = 1 or id = 2");
-		List<User> list3 = User.dao.find("select * from user where id = 1 or id = 2");
-		if (!(list1.isEmpty() || list2.isEmpty())) {
-			for (int i = 0; i < 10; i++) {
-				JSONObject j = new JSONObject();
+		List<Record> R = Db.find("");
 
-				try {
-					j.put("shop_name", list1.get(i).getUserName());
-					j.put("content", list2.get(i).getUserId());
-					j.put("img",list3.get(i).getUserImg());
-					json.put(j);
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		} else {
+		if (R == null) {
 			renderText("hallfail");
+		} else {
+			for (int i = 0; i < R.size(); i++) {
+				System.out.println(R.get(i).getColumns());
+				json.put(R.get(i).getColumns());
+			}
+			System.out.println(json.toString());
+			renderJson(json);
 		}
-		System.out.println(json.toString());
-		renderJson(json);
 	}
 	public void sao(){
 		HttpServletRequest r = getRequest();
 		String shopid = r.getParameter("shop_id");
-		//根据shopid获取商家页面图片
-		List<User> list = User.dao.find("select * from user where id = 1 or id = 2");
-		//根据shopid查询服务类型
-		List<User> list1 = User.dao.find("select * from user where id = 1 or id = 2");
-		//根据shopid查询队列人数
-		List<User> list2 = User.dao.find("select * from user where id = 1 or id = 2");
-		//根据shopid查询商店地址
-		List<User> list3 = User.dao.find("select * from user where id = 1 or id = 2");
-		JSONObject json = new JSONObject();
-		try {
-			json.put("img", list.get(0).getUserImg());
-			for (int i = 0; i < list1.size(); i++) {
-				JSONObject json1 = new JSONObject();
-				json1.put("type", list1.get(i).getUserId());
-				json1.put("num", list2.get(i).getUserName());
-				json.put("line", json1);
+		JSONArray json = new JSONArray();
+
+		List<Record> R = Db.find("");
+
+		if (R == null) {
+			renderText("saofail");
+		} else {
+			for (int i = 0; i < R.size(); i++) {
+				System.out.println(R.get(i).getColumns());
+				json.put(R.get(i).getColumns());
 			}
-			json.put("address", list3.get(0).getUserName());
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println(json.toString());
+			renderJson(json);
 		}
-		System.out.println(json.toString());
-		renderJson(json);
-		
+
 	}
 	public void store(){
 		HttpServletRequest r = getRequest();
 		String shopid = r.getParameter("shop_id");
-		//根据shopid获取商家页面图片
-		List<User> list = User.dao.find("select * from user where id = 1 or id = 2");
-		//根据shopid查询服务类型
-		List<User> list1 = User.dao.find("select * from user where id = 1 or id = 2");
-		//根据shopid查询队列人数
-		List<User> list2 = User.dao.find("select * from user where id = 1 or id = 2");
-		//根据shopid查询商店地址
-		List<User> list3 = User.dao.find("select * from user where id = 1 or id = 2");
-		JSONObject json = new JSONObject();
-		try {
-			json.put("img", list.get(0).getUserImg());
-			for (int i = 0; i < list1.size(); i++) {
-				JSONObject json1 = new JSONObject();
-				json1.put("type", list1.get(i).getUserId());
-				json1.put("num", list2.get(i).getUserName());
-				json.put("line", json1);
+		JSONArray json = new JSONArray();
+
+		List<Record> R = Db.find("");
+
+		if (R == null) {
+			renderText("storefail");
+		} else {
+			for (int i = 0; i < R.size(); i++) {
+				System.out.println(R.get(i).getColumns());
+				json.put(R.get(i).getColumns());
 			}
-			json.put("address", list3.get(0).getUserName());
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println(json.toString());
+			renderJson(json);
 		}
-		System.out.println(json.toString());
-		renderJson(json);
 	}
 	public void join(){
 		HttpServletRequest r = getRequest();
