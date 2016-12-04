@@ -17,12 +17,20 @@ public abstract class BaseShop<M extends BaseShop<M>> extends Model<M> implement
 		return get("id");
 	}
 
-	public void setShopImg(java.lang.String shopImg) {
-		set("shop_img", shopImg);
+	public void setShopImgSmall(java.lang.String shopImgSmall) {
+		set("shop_img_small", shopImgSmall);
 	}
 
-	public java.lang.String getShopImg() {
-		return get("shop_img");
+	public java.lang.String getShopImgSmall() {
+		return get("shop_img_small");
+	}
+
+	public void setShopImgBig(java.lang.String shopImgBig) {
+		set("shop_img_big", shopImgBig);
+	}
+
+	public java.lang.String getShopImgBig() {
+		return get("shop_img_big");
 	}
 
 	public void setShopName(java.lang.String shopName) {
@@ -33,11 +41,11 @@ public abstract class BaseShop<M extends BaseShop<M>> extends Model<M> implement
 		return get("shop_name");
 	}
 
-	public void setShopType(java.lang.String shopType) {
+	public void setShopType(java.lang.Integer shopType) {
 		set("shop_type", shopType);
 	}
 
-	public java.lang.String getShopType() {
+	public java.lang.Integer getShopType() {
 		return get("shop_type");
 	}
 

@@ -127,15 +127,22 @@ public class ServerController extends Controller {
 		HttpServletRequest r = getRequest();
 		String city = r.getParameter("city");
 		JSONArray json = new JSONArray();
-		
-		List<Record> R = Db.find("");
+		//缺少order by 排队的人数大小
+		List<Record> R = Db.find("select shop_name,shop_description,shop_img_small from shop where shop_city =" + city);
 		
 		if(R == null){
 			renderText("homefail");
 		}else{
-			for (int i = 0; i < 4; i++) {
-				System.out.println(R.get(i).getColumns());
-				json.put(R.get(i).getColumns());
+			if (R.size() <= 4) {
+				for (int i = 0; i < R.size(); i++) {
+					System.out.println(R.get(i).getColumns());
+					json.put(R.get(i).getColumns());
+				}
+			} else {
+				for (int i = 0; i < 4; i++) {
+					System.out.println(R.get(i).getColumns());
+					json.put(R.get(i).getColumns());
+				}
 			}
 			System.out.println(json.toString());
 			renderJson(json);
@@ -175,16 +182,26 @@ public class ServerController extends Controller {
 	}
 	
 	public void line_dining(){
+		HttpServletRequest r = getRequest();
+		String city = r.getParameter("city");
+		
 		JSONArray json = new JSONArray();
 		
-		List<Record> R = Db.find("");
+		List<Record> R = Db.find("select shop_name,shop_description,shop_img_small from shop where shop_city =" + city + "and shop_type = '1'");
 		
 		if(R == null){
 			renderText("diningfail");
 		}else{
-			for (int i = 0; i <R.size(); i++) {
-				System.out.println(R.get(i).getColumns());
-				json.put(R.get(i).getColumns());
+			if (R.size() <= 12) {
+				for (int i = 0; i < R.size(); i++) {
+					System.out.println(R.get(i).getColumns());
+					json.put(R.get(i).getColumns());
+				}
+			} else {
+				for (int i = 0; i < 12; i++) {
+					System.out.println(R.get(i).getColumns());
+					json.put(R.get(i).getColumns());
+				}
 			}
 			System.out.println(json.toString());
 			renderJson(json);
@@ -192,16 +209,26 @@ public class ServerController extends Controller {
 	}
 	
 	public void line_hall() {
+		HttpServletRequest r = getRequest();
+		String city = r.getParameter("city");
+		
 		JSONArray json = new JSONArray();
-
-		List<Record> R = Db.find("");
-
-		if (R == null) {
-			renderText("hallfail");
-		} else {
-			for (int i = 0; i < R.size(); i++) {
-				System.out.println(R.get(i).getColumns());
-				json.put(R.get(i).getColumns());
+		
+		List<Record> R = Db.find("select shop_name,shop_description,shop_img_small from shop where shop_city =" + city + "and shop_type = '2'");
+		
+		if(R == null){
+			renderText("diningfail");
+		}else{
+			if (R.size() <= 12) {
+				for (int i = 0; i < R.size(); i++) {
+					System.out.println(R.get(i).getColumns());
+					json.put(R.get(i).getColumns());
+				}
+			} else {
+				for (int i = 0; i < 12; i++) {
+					System.out.println(R.get(i).getColumns());
+					json.put(R.get(i).getColumns());
+				}
 			}
 			System.out.println(json.toString());
 			renderJson(json);
@@ -211,8 +238,7 @@ public class ServerController extends Controller {
 		HttpServletRequest r = getRequest();
 		String shopid = r.getParameter("shop_id");
 		JSONArray json = new JSONArray();
-
-		List<Record> R = Db.find("");
+		List<Record> R = Db.find("select shop_img_big,now_type1,now_type2,now_type3,all_type1,all_type2,all_type3,shop_address from shop,ordernum where id = shop_id =" + shopid);
 
 		if (R == null) {
 			renderText("saofail");
@@ -231,7 +257,7 @@ public class ServerController extends Controller {
 		String shopid = r.getParameter("shop_id");
 		JSONArray json = new JSONArray();
 
-		List<Record> R = Db.find("");
+		List<Record> R = Db.find("select shop_img_big,now_type1,now_type2,now_type3,all_type1,all_type2,all_type3,shop_address from shop,ordernum where id = shop_id =" + shopid");
 
 		if (R == null) {
 			renderText("storefail");
