@@ -33,11 +33,11 @@ public abstract class BaseOrdertab<M extends BaseOrdertab<M>> extends Model<M> i
 		return get("shop_id");
 	}
 
-	public void setTime(java.lang.String time) {
+	public void setTime(java.util.Date time) {
 		set("time", time);
 	}
 
-	public java.lang.String getTime() {
+	public java.util.Date getTime() {
 		return get("time");
 	}
 

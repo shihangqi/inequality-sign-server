@@ -1,7 +1,7 @@
 <#include "/common/_layout.html"/>
 <@layout>
-<h1>Server管理&nbsp;&nbsp;
-<a href="/server/add">创建Server</a>
+<h1>Shop管理&nbsp;&nbsp;
+<a href="/shop/add">创建Shop</a>
 </h1>
 <div class="table_box">
 	<table class="list">
@@ -9,31 +9,36 @@
 			<tr>
 				<th width="4%">id</th>
 				<th width="10%">服务者Logo</th>
+				<th width="12%">服务图片</th>
 				<th width="10%">服务名称</th>
 				<th width="4%">服务类型</th>
 				<th width="4%">服务地址</th>
-				<th width="12%">服务电话</th>
+				<th width="8%">服务电话</th>
+				<th width="4%">服务城市</th>
+				<th width="12%">服务简介</th>
 				<th width="10%">操作</th>
 			</tr>
 			
-			<#list serverPage.getList() as x>  <!-- as x ����ÿһ�� -->
+			<#list shopPage.getList() as x>  <!-- as x ����ÿһ�� -->
 			<tr>
 				<td style="text-align:left;">${x.id}</td>
-				<td style="text-align:left;">${x.server_img}</td>
+				<td style="text-align:left;">${x.server_img_small}</td>
+				<td style="text-align:left;">${x.server_img_big}</td>
 				<td style="text-align:left;">${x.server_name}</td>
 				<td style="text-align:left;">${x.server_type}</td>
 				<td style="text-align:left;">${x.server_address}</td>
 				<td style="text-align:left;">${x.server_tel}</td>
-				
+				<td style="text-align:left;">${x.server_city}</td>
+				<td style="text-align:left;">${x.server_descrpition}</td>
 				<td style="text-align:left;">
-					&nbsp;&nbsp;<a href="/server/delete/${x.id}">删除</a>
-					&nbsp;&nbsp;<a href="/server/edit/${x.id}">修改</a>
+					&nbsp;&nbsp;<a href="/shop/delete/${x.id}">删除</a>
+					&nbsp;&nbsp;<a href="/shop/edit/${x.id}">修改</a>
 				</td>
 			</tr>
 			</#list>
 		</tbody>
 	</table>
 	<#include "/common/_paginate.html" />
-	<@paginate currentPage=serverPage.pageNumber totalPage=serverPage.totalPage actionUrl="/server/" />
+	<@paginate currentPage=shopPage.pageNumber totalPage=shopPage.totalPage actionUrl="/shop/" />
 </div>
 </@layout>

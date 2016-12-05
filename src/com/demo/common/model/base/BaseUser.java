@@ -49,12 +49,12 @@ public abstract class BaseUser<M extends BaseUser<M>> extends Model<M> implement
 		return get("user_sex");
 	}
 
-	public void setUserId(java.lang.String userId) {
-		set("user_id", userId);
+	public void setOpenId(java.lang.String openId) {
+		set("open_id", openId);
 	}
 
-	public java.lang.String getUserId() {
-		return get("user_id");
+	public java.lang.String getOpenId() {
+		return get("open_id");
 	}
 
 }

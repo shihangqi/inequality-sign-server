@@ -49,11 +49,11 @@ public abstract class BaseComment<M extends BaseComment<M>> extends Model<M> imp
 		return get("content");
 	}
 
-	public void setTime(java.lang.String time) {
+	public void setTime(java.util.Date time) {
 		set("time", time);
 	}
 
-	public java.lang.String getTime() {
+	public java.util.Date getTime() {
 		return get("time");
 	}
 

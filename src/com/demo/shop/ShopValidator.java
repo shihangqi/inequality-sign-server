@@ -1,13 +1,13 @@
-package com.demo.server;
+package com.demo.shop;
 
-import com.demo.common.model.Server;
+import com.demo.common.model.Shop;
 import com.jfinal.core.Controller;
 import com.jfinal.validate.Validator;
 
 /**
  * BlogValidator.
  */
-public class ServerValidator extends Validator {
+public class ShopValidator extends Validator {
 	
 	protected void validate(Controller controller) {
 //		
@@ -20,12 +20,12 @@ public class ServerValidator extends Validator {
 	}
 	
 	protected void handleError(Controller controller) {
-		controller.keepModel(Server.class);
+		controller.keepModel(Shop.class);
 		
 		String actionKey = getActionKey();
-		if (actionKey.equals("/server/save"))
+		if (actionKey.equals("/shop/save"))
 			controller.render("add.html");
-		else if (actionKey.equals("/server/update"))
+		else if (actionKey.equals("/shop/update"))
 			controller.render("edit.html");
 	}
 }

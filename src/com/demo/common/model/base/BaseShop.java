@@ -17,6 +17,22 @@ public abstract class BaseShop<M extends BaseShop<M>> extends Model<M> implement
 		return get("id");
 	}
 
+	public void setShopId(java.lang.Integer shopId) {
+		set("shop_id", shopId);
+	}
+
+	public java.lang.Integer getShopId() {
+		return get("shop_id");
+	}
+
+	public void setShopPwd(java.lang.String shopPwd) {
+		set("shop_pwd", shopPwd);
+	}
+
+	public java.lang.String getShopPwd() {
+		return get("shop_pwd");
+	}
+
 	public void setShopImgSmall(java.lang.String shopImgSmall) {
 		set("shop_img_small", shopImgSmall);
 	}

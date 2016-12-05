@@ -5,7 +5,7 @@ import com.demo.common.model._MappingKit;
 import com.demo.index.IndexController;
 import com.demo.ordernum.OrdernumController;
 import com.demo.ordertab.OrdertabController;
-import com.demo.server.ServerController;
+import com.demo.shop.ShopController;
 import com.demo.user.UserController;
 import com.jfinal.config.Constants;
 import com.jfinal.config.Handlers;
@@ -39,7 +39,7 @@ public class DemoConfig extends JFinalConfig {
 		me.add("/", IndexController.class, "/index");	// 第三个参数为该Controller的视图存放路径
 		me.add("/blog", BlogController.class);			// 第三个参数省略时默认与第一个参数值相同，在此即为 "/blog"
 		me.add("/user",UserController.class);
-		me.add("/server",ServerController.class);
+		me.add("/shop",ShopController.class);
 		me.add("/ordertab",OrdertabController.class);
 		me.add("/ordernum",OrdernumController.class);
 	}

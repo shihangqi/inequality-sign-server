@@ -11,6 +11,6 @@ public class Shop extends BaseShop<Shop> {
 	public static final Shop dao = new Shop();
 	
 	public Page<Shop> paginate(int pageNumber, int pageSize) {
-		return paginate(pageNumber, pageSize, "select *", "from server order by id asc");
+		return paginate(pageNumber, pageSize, "select *", "from shop order by id asc");
 	}
 }

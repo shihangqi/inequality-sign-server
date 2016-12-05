@@ -17,51 +17,51 @@ public abstract class BaseOrdernum<M extends BaseOrdernum<M>> extends Model<M> i
 		return get("shop_id");
 	}
 
-	public void setNowType1(java.lang.String nowType1) {
+	public void setNowType1(java.lang.Integer nowType1) {
 		set("now_type1", nowType1);
 	}
 
-	public java.lang.String getNowType1() {
+	public java.lang.Integer getNowType1() {
 		return get("now_type1");
 	}
 
-	public void setNowType2(java.lang.String nowType2) {
+	public void setNowType2(java.lang.Integer nowType2) {
 		set("now_type2", nowType2);
 	}
 
-	public java.lang.String getNowType2() {
+	public java.lang.Integer getNowType2() {
 		return get("now_type2");
 	}
 
-	public void setNowType3(java.lang.String nowType3) {
+	public void setNowType3(java.lang.Integer nowType3) {
 		set("now_type3", nowType3);
 	}
 
-	public java.lang.String getNowType3() {
+	public java.lang.Integer getNowType3() {
 		return get("now_type3");
 	}
 
-	public void setAllType1(java.lang.String allType1) {
+	public void setAllType1(java.lang.Integer allType1) {
 		set("all_type1", allType1);
 	}
 
-	public java.lang.String getAllType1() {
+	public java.lang.Integer getAllType1() {
 		return get("all_type1");
 	}
 
-	public void setAllType2(java.lang.String allType2) {
+	public void setAllType2(java.lang.Integer allType2) {
 		set("all_type2", allType2);
 	}
 
-	public java.lang.String getAllType2() {
+	public java.lang.Integer getAllType2() {
 		return get("all_type2");
 	}
 
-	public void setAllType3(java.lang.String allType3) {
+	public void setAllType3(java.lang.Integer allType3) {
 		set("all_type3", allType3);
 	}
 
-	public java.lang.String getAllType3() {
+	public java.lang.Integer getAllType3() {
 		return get("all_type3");
 	}
 

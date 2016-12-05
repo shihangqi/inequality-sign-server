@@ -1,6 +1,9 @@
 package com.demo.user;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -12,7 +15,7 @@ import org.json.JSONObject;
 import org.w3c.dom.Attr;
 
 import com.demo.common.model.Ordertab;
-import com.demo.common.model.Server;
+import com.demo.common.model.Shop;
 import com.demo.common.model.User;
 import com.demo.push.Push;
 import com.jfinal.aop.Before;
@@ -135,14 +138,14 @@ public class UserController extends Controller {
 		// 判断是第三方登录还是手机登录
 		if (r.getParameter("user_tel") == null) {
 			user_id = r.getParameter("user_id");
-			List<User> userid = User.dao.find("select * from user where user_id" + "=" + "\"" + user_id + "\"");
+			List<User> userid = User.dao.find("select * from user where open_id" + "=" + "\"" + user_id + "\"");
 //			 判断是否是新用户
 			 if(userid.isEmpty()){
 				 User u = new User();
-				 u.setUserId(user_id);
+				 u.setOpenId(user_id);
 				 u.save();
 			 }
-			List<User> id = User.dao.find("select * from user where user_id" + "=" + "\"" + user_id + "\"");
+			List<User> id = User.dao.find("select * from user where open_id" + "=" + "\"" + user_id + "\"");
 			if (id.isEmpty()) {
 				renderText("loginfail");
 			} else {
@@ -219,7 +222,7 @@ public class UserController extends Controller {
 
 	public void inquiry() {
 		HttpServletRequest r = getRequest();
-		String id = r.getParameter("id");
+		String id = r.getParameter("user_id");
 		JSONArray json = new JSONArray();
 		
 		List<Record> R = Db.find("select shop_name,num from ordertab, shop where shop.id = ordertab.shop_id and ordertab.user_id ="+id);
