@@ -231,6 +231,6 @@ public class UserController extends Controller {
 			json.put(R.get(i).getColumns());
 		}
 		System.out.println(json.toString());
-		renderJson(json);
+		renderText(json.toString());
 	}
 }

@@ -138,6 +138,7 @@ public class ShopController extends Controller {
 		HttpServletRequest r = getRequest();
 		String city = r.getParameter("city");
 		JSONArray json = new JSONArray();
+		System.out.println(city);
 		// 缺少order by 排队的人数大小
 		List<Record> R = Db.find("select shop_name,shop_description,shop_img_small from shop where shop_city =" + city);
 
@@ -156,7 +157,7 @@ public class ShopController extends Controller {
 				}
 			}
 			
-			renderJson(json);
+			renderText(json.toString());
 			System.out.println(json.toString());
 		}
 	}
@@ -189,7 +190,7 @@ public class ShopController extends Controller {
 			renderText("searchfail");
 		} else {
 			json.put(R.get(0).getColumns());
-			renderJson(json);
+			renderText(json.toString());
 		}
 	}
 
@@ -199,8 +200,7 @@ public class ShopController extends Controller {
 
 		JSONArray json = new JSONArray();
 
-		List<Record> R = Db.find("select shop_name,shop_description,shop_img_small from shop where shop_city =" + city
-				+ "and shop_type = '1'");
+		List<Record> R = Db.find("select shop_name,shop_description,shop_img_small from shop where shop_city =" + city);
 
 		if (R == null) {
 			renderText("diningfail");
@@ -217,7 +217,7 @@ public class ShopController extends Controller {
 				}
 			}
 			System.out.println(json.toString());
-			renderJson(json);
+			renderText(json.toString());
 		}
 	}
 
@@ -245,7 +245,7 @@ public class ShopController extends Controller {
 				}
 			}
 			System.out.println(json.toString());
-			renderJson(json);
+			renderText(json.toString());
 		}
 	}
 
@@ -266,7 +266,7 @@ public class ShopController extends Controller {
 				json.put(R.get(i).getColumns());
 			}
 			System.out.println(json.toString());
-			renderJson(json);
+			renderText(json.toString());
 		}
 
 	}
@@ -288,7 +288,7 @@ public class ShopController extends Controller {
 				json.put(R.get(i).getColumns());
 			}
 			System.out.println(json.toString());
-			renderJson(json);
+			renderText(json.toString());
 		}
 	}
 
@@ -303,10 +303,9 @@ public class ShopController extends Controller {
 		if (json.toString().equals("[]")) {
 			renderText("joinfail");
 		} else {
-			renderJson(json);
+			renderText(json.toString());
 			System.out.println(json.toString());
 		}
-
 	}
 	/**
 	 * 商家端接口
@@ -351,8 +350,45 @@ public class ShopController extends Controller {
 		Shop s = new Shop();
 		s.setShopId(Integer.parseInt(shop_id));
 		s.setShopPwd(shop_pwd);
-		s.save();
-		
+		boolean b = s.save();
+		if(b == true){
+			Ordernum o = new Ordernum();
+			o.save();
+		}
 	}
 	
+	public void change_shop_smallimg(){
+		
+	}
+	public void change_shop_bigimg(){
+		
+	}
+	public void change_shop_name(){
+		
+	}
+	public void change_shop_type(){
+		
+	}
+	public void change_shop_city(){
+		
+	}
+	public void change_shop_address(){
+		
+	}
+	public void change_shop_tel(){
+		
+	}
+	//有待考虑   主要问题，数据库内没有对应列
+	public void change_shop_ordertype(){
+		
+	}
+	public void change_shop_loginname(){
+		
+	}
+	public void change_shop_pwd(){
+		
+	}
+	public void click(){
+		
+	}
 }

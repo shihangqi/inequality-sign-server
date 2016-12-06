@@ -14,5 +14,6 @@
 	<classpathentry kind="lib" path="F:/eclipse/inequality-sign-server/jar/4.3.2/httpcore-4.3.2.jar"/>
 	<classpathentry kind="lib" path="F:/eclipse/inequality-sign-server/jar/20090211/json-20090211.jar"/>
 	<classpathentry kind="lib" path="F:/eclipse/inequality-sign-server/jar/4.3.5/httpclient-4.3.5.jar"/>
+	<classpathentry kind="lib" path="F:/eclipse/inequality-sign-server/jar/cos-26Dec2008.jar"/>
 	<classpathentry kind="output" path="WebRoot/WEB-INF/classes"/>
 </classpath>
