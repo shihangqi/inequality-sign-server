@@ -7,7 +7,7 @@ public class Push{
 	
 	
 	public void sendAndroidUnicast() throws Exception {
-		AndroidUnicast unicast = new AndroidUnicast("583ab065b27b0a6c38001538","cs0kpzgynfzyhbbnsj4nsjsphllguhsx");
+		AndroidUnicast unicast = new AndroidUnicast("58477e1b310c936be50003db","h1cjmlrvva0ctdtdoly337a0iimbcnbo");
 		// TODO Set your device token
 		unicast.setTicker( "这是一个标题");
 		unicast.setTitle(  "不等号");
@@ -23,7 +23,7 @@ public class Push{
 		unicast.setProductionMode();
 		// Set customized fields
 		unicast.setExtraField("test", "helloworld");
-		unicast.setDeviceToken( "Ap1QhU2l9SL-sL_rlygx0AUuKLuHVXWkuvAHpflLR9Sf");
+		unicast.setDeviceToken( "Ap1QhU2l9SL-sL_rlygx0AV9tmHzTACX-6TaTPsmW4ii");
 		client.send(unicast);
 	}
 }

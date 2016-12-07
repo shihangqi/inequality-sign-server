@@ -81,18 +81,18 @@ public class UserController extends Controller {
 
 		// 2.4返回jason
 
-		HttpServletRequest r = getRequest();
-		String username = r.getParameter("username");
-		List<User> user = User.dao.find("select * from user where user_tel" + "=" + "\"" + username + "\"");
-		System.out.println(user.size());
-		if (user.isEmpty()) {
-			// 用户名不存在
-			renderText("0");
-			System.out.println("0");
-		} else {
-			// 用户名存在
-			renderText("1");
-			System.out.println("1");
+//		HttpServletRequest r = getRequest();
+//		String username = r.getParameter("username");
+//		List<User> user = User.dao.find("select * from user where user_tel" + "=" + "\"" + username + "\"");
+//		System.out.println(user.size());
+//		if (user.isEmpty()) {
+//			// 用户名不存在
+//			renderText("0");
+//			System.out.println("0");
+//		} else {
+//			// 用户名存在
+//			renderText("1");
+//			System.out.println("1");
 			Push push = new Push();
 			try {
 				push.sendAndroidUnicast();
@@ -101,26 +101,26 @@ public class UserController extends Controller {
 				e.printStackTrace();
 			}
 
-		}
+//		}
 
-		List<User> ls = new ArrayList<User>();
-
-		User object = new User();
-		object.setId(123);
-		object.setUserTel("测试1");
-		object.setUserName("内容1");
-		ls.add(object);
-		User object1 = new User();
-		object1.setId(1234);
-		object1.setUserTel("测试2");
-		object1.setUserName("内容2");
-		ls.add(object1);
-		User object2 = new User();
-		object2.setId(1233);
-		object2.setUserTel("测试3");
-		object2.setUserName("内容3");
-		ls.add(object2);
-		renderJson(ls);
+//		List<User> ls = new ArrayList<User>();
+//
+//		User object = new User();
+//		object.setId(123);
+//		object.setUserTel("测试1");
+//		object.setUserName("内容1");
+//		ls.add(object);
+//		User object1 = new User();
+//		object1.setId(1234);
+//		object1.setUserTel("测试2");
+//		object1.setUserName("内容2");
+//		ls.add(object1);
+//		User object2 = new User();
+//		object2.setId(1233);
+//		object2.setUserTel("测试3");
+//		object2.setUserName("内容3");
+//		ls.add(object2);
+//		renderJson(ls);
 		// //或者 List<User> ls =User.me.find("select * from blo g");
 		//
 		// 3 获取客户端请求参数
