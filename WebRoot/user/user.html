@@ -8,11 +8,12 @@
 		<tbody>
 			<tr>
 				<th width="4%">id</th>
-				<th width="10%">手机号</th>
+				<th width="10%">用户名</th>
 				<th width="10%">昵称</th>
 				<th width="12%">头像</th>
 				<th width="8%">性别</th>
 				<th width="10%">标识</th>
+				<th width="10%">push_id</th>
 				<th width="12%">操作</th>
 			</tr>
 			
@@ -23,8 +24,8 @@
 				<td style="text-align:left;">${x.user_name}</td>
 				<td style="text-align:left;">${x.user_img}</td>
 				<td style="text-align:left;">${x.user_sex}</td>
-				<td style="text-align:left;">${x.user_id}</td>
-				
+				<td style="text-align:left;">${x.open_id}</td>
+				<td style="text-align:left;">${x.push_id}</td>
 				
 				<td style="text-align:left;">
 					&nbsp;&nbsp;<a href="/user/delete/${x.id}">删除</a>
