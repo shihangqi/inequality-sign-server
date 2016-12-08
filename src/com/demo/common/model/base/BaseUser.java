@@ -57,4 +57,12 @@ public abstract class BaseUser<M extends BaseUser<M>> extends Model<M> implement
 		return get("open_id");
 	}
 
+	public void setPushId(java.lang.String pushId) {
+		set("push_id", pushId);
+	}
+
+	public java.lang.String getPushId() {
+		return get("push_id");
+	}
+
 }

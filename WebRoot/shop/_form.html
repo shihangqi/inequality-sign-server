@@ -2,36 +2,44 @@
 	<legend>创建Shop</legend>
 	<input type="hidden" name="shop.id" value="${(shop.id)!}" />
 	<div>
+		<label>用户名</label>
+		<input type="text" name="shop.shop_id" value="${(shop.shop_id)!}" />${shop_idMsg!}
+	</div>
+	<div>
+		<label>密码</label>
+		<input type="text" name="shop.shop_pwd" value="${(shop.shop_pwd)!}" />${shop_pwdMsg!}
+	</div>
+	<div>
 		<label>服务者Logo</label>
-		<input type="text" name="shop.shop_img_small" value="${(shop.shop_img_small)!}" />${urlMsg!}
+		<input type="text" name="shop.shop_img_small" value="${(shop.shop_img_small)!}" />${shop_img_smallMsg!}
 	</div>
 	<div>
 		<label>服务者图片</label>
-		<input type="text" name="shop.shop_img_big" value="${(shop.shop_img_big)!}" />${urlMsg!}
+		<input type="text" name="shop.shop_img_big" value="${(shop.shop_img_big)!}" />${shop_img_bigMsg!}
 	</div>
 	<div>
 		<label>服务者名称</label>
-		<input type="text" name="shop.shop_name" value="${(shop.shop_name)!}" />${nameMsg!}
+		<input type="text" name="shop.shop_name" value="${(shop.shop_name)!}" />${shop_nameMsg!}
 	</div>
 	<div>
 		<label>服务类型</label>
-		<input type="text" name="shop.shop_type" value="${(shop.shop_type)!}" />${typeMsg!}
+		<input type="text" name="shop.shop_type" value="${(shop.shop_type)!}" />${shop_typeMsg!}
 	</div>
 	<div>
 		<label>服务地址</label>
-		<input type="text" name="shop.shop_address" value="${(shop.shop_address)!}" />${addressMsg!}
+		<input type="text" name="shop.shop_address" value="${(shop.shop_address)!}" />${shop_addressMsg!}
 	</div>
 	<div>
 		<label>服务电话</label>
-		<input type="text" name="shop.shop_tel" value="${(shop.shop_tel)!}" />${callMsg!}
+		<input type="text" name="shop.shop_tel" value="${(shop.shop_tel)!}" />${shop_tellMsg!}
 	</div>
 	<div>
 		<label>服务城市</label>
-		<input type="text" name="shop.shop_city" value="${(shop.shop_city)!}" />${cityMsg!}
+		<input type="text" name="shop.shop_city" value="${(shop.shop_city)!}" />${shop_cityMsg!}
 	</div>
 	<div>
-		<label>服务电话</label>
-		<input type="text" name="shop.shop_description" value="${(shop.shop_description)!}" />${descriptionMsg!}
+		<label>服务简介</label>
+		<input type="text" name="shop.shop_description" value="${(shop.shop_description)!}" />${shop_descriptionMsg!}
 	</div>
 	<div>
 		<label>&nbsp;</label>
