@@ -33,12 +33,12 @@ public abstract class BaseComment<M extends BaseComment<M>> extends Model<M> imp
 		return get("shop_id");
 	}
 
-	public void setStar(java.lang.Integer star) {
-		set("star", star);
+	public void setStart(java.lang.Integer start) {
+		set("start", start);
 	}
 
-	public java.lang.Integer getStar() {
-		return get("star");
+	public java.lang.Integer getStart() {
+		return get("start");
 	}
 
 	public void setContent(java.lang.String content) {

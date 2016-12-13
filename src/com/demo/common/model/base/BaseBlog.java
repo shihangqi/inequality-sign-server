@@ -25,11 +25,11 @@ public abstract class BaseBlog<M extends BaseBlog<M>> extends Model<M> implement
 		return get("title");
 	}
 
-	public void setContent(java.lang.Integer content) {
+	public void setContent(java.lang.String content) {
 		set("content", content);
 	}
 
-	public java.lang.Integer getContent() {
+	public java.lang.String getContent() {
 		return get("content");
 	}
 
