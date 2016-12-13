@@ -22,6 +22,7 @@ import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.upload.UploadFile;
 
 /**
  * UserController 所有 sql 与业务逻辑写在 Model 或 Service 中，不要写在 Controller
@@ -37,8 +38,17 @@ public class UserController extends Controller {
 	public void add() {
 	}
 
-	@Before(UserValidator.class)
+//	@Before(UserValidator.class)
 	public void save() {
+		UploadFile files = getFile();
+		
+		// 拼接文件上传的完整路径
+				String fileUrl = "http://" + this.getRequest().getRemoteAddr() + ":"
+						+ this.getRequest().getLocalPort() + "/upload/"
+						+ files.getFileName();
+				
+				System.out.println(fileUrl);
+
 		getModel(User.class).save();
 		redirect("/user");
 	}
@@ -95,7 +105,7 @@ public class UserController extends Controller {
 //			System.out.println("1");
 			Push push = new Push();
 			try {
-				push.sendAndroidUnicast();
+				push.sendAndroidUnicast("Ap1QhU2l9SL-sL_rlygx0AV9tmHzTACX-6TaTPsmW4ii");
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -135,9 +145,12 @@ public class UserController extends Controller {
 		HttpServletRequest r = getRequest();
 		String user_tel;
 		String user_id;
+		String push_id;
+		push_id = r.getParameter("push_id");
 		// 判断是第三方登录还是手机登录
 		if (r.getParameter("user_tel") == null) {
 			user_id = r.getParameter("user_id");
+			System.out.println(user_id+"");
 			List<User> userid = User.dao.find("select * from user where open_id" + "=" + "\"" + user_id + "\"");
 //			 判断是否是新用户
 			 if(userid.isEmpty()){
@@ -149,10 +162,13 @@ public class UserController extends Controller {
 			if (id.isEmpty()) {
 				renderText("loginfail");
 			} else {
+				System.out.println(id.get(0).getId().toString());
 				renderText(id.get(0).getId().toString());
 			}
+			id.get(0).setPushId(push_id);
+			id.get(0).update();
 		} else if (r.getParameter("user_id") == null) {
-			user_tel = r.getParameter("user_tel");
+			user_tel = r.getParameter("user_tel");//
 			System.out.println(user_tel);
 			List<User> userid = User.dao.find("select * from user where user_tel" + "=" + "\"" + user_tel + "\"");
 			// 判断是否是新用户
@@ -168,6 +184,8 @@ public class UserController extends Controller {
 			} else {
 				renderText(id.get(0).getId().toString());
 			}
+			id.get(0).setPushId(push_id);
+			id.get(0).update();
 
 		} else {
 			renderText("loginfail");

@@ -17,11 +17,11 @@ public abstract class BaseShop<M extends BaseShop<M>> extends Model<M> implement
 		return get("id");
 	}
 
-	public void setShopId(java.lang.Integer shopId) {
+	public void setShopId(java.lang.String shopId) {
 		set("shop_id", shopId);
 	}
 
-	public java.lang.Integer getShopId() {
+	public java.lang.String getShopId() {
 		return get("shop_id");
 	}
 
@@ -57,11 +57,11 @@ public abstract class BaseShop<M extends BaseShop<M>> extends Model<M> implement
 		return get("shop_name");
 	}
 
-	public void setShopType(java.lang.Integer shopType) {
+	public void setShopType(java.lang.String shopType) {
 		set("shop_type", shopType);
 	}
 
-	public java.lang.Integer getShopType() {
+	public java.lang.String getShopType() {
 		return get("shop_type");
 	}
 

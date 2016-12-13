@@ -15,6 +15,7 @@ import com.demo.common.model.Scene;
 import com.demo.common.model.Shop;
 import com.demo.common.model.User;
 import com.demo.logic.Client_logic;
+import com.demo.logic.Shop_client_logic;
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
@@ -61,16 +62,24 @@ public class ShopController extends Controller {
 		String city = r.getParameter("city");
 		JSONArray json = new JSONArray();
 		List<Record> R = Db
-				.find("select shop_name, count(shop_id)from ordertab,shop where shop_id = shop.id group by shop_id");
+				.find("select shop_name, count(shop.id), shop_address,shop_img_small from ordertab,shop where ordertab.shop_id = shop.id and shop_city = "+city+ " group by shop.id order by count(shop.id) DESC");
 		if (R == null) {
 			renderText("listfail");
 		} else {
-			for (int i = 0; i < R.size(); i++) {
-				System.out.println(R.get(i).getColumns());
-				json.put(R.get(i).getColumns());
+			if (R.size() <= 12) {
+				for (int i = 0; i < R.size(); i++) {
+					System.out.println(R.get(i).getColumns());
+					json.put(R.get(i).getColumns());
+				}
+			} else {
+				for (int i = 0; i < 12; i++) {
+					System.out.println(R.get(i).getColumns());
+					json.put(R.get(i).getColumns());
+				}
+
 			}
 			System.out.println(json.toString());
-			renderJson(json);
+			renderText(json.toString());
 		}
 	}
 
@@ -87,7 +96,7 @@ public class ShopController extends Controller {
 				json.put(R.get(i).getColumns());
 			}
 			System.out.println(json.toString());
-			renderJson(json);
+			renderText(json.toString());
 		}
 	}
 
@@ -111,7 +120,7 @@ public class ShopController extends Controller {
 
 			}
 			System.out.println(json.toString());
-			renderJson(json);
+			renderText(json.toString());
 		}
 	}
 
@@ -140,7 +149,7 @@ public class ShopController extends Controller {
 		JSONArray json = new JSONArray();
 		System.out.println(city);
 		// 缺少order by 排队的人数大小
-		List<Record> R = Db.find("select shop_name,shop_description,shop_img_small from shop where shop_city =" + city);
+		List<Record> R = Db.find("select id,shop_name,shop_description,shop_img_small from shop where shop_city =" + city);
 
 		if (R == null) {
 			renderText("homefail");
@@ -182,9 +191,9 @@ public class ShopController extends Controller {
 		String city = r.getParameter("city");
 		String content = r.getParameter("content");
 		JSONArray json = new JSONArray();
-
-		List<Record> R = Db.find("select shop_name,shop_description,shop_img_small from shop where shop_name ="
-				+ content + "and city =" + city);
+		List<Record> R = Db.find("select id,shop_name,shop_description,shop_img_small from shop where shop_name like "+"\"%"
+				+ content + "%\""+" and shop_city = " + "\"" + city+ "\"");
+		
 
 		if (R == null) {
 			renderText("searchfail");
@@ -200,7 +209,7 @@ public class ShopController extends Controller {
 
 		JSONArray json = new JSONArray();
 
-		List<Record> R = Db.find("select shop_name,shop_description,shop_img_small from shop where shop_city =" + city);
+		List<Record> R = Db.find("select id,shop_name,shop_description,shop_img_small from shop where shop_city =" + "\""+city+"\""+ "and shop_type = \'1\'");
 
 		if (R == null) {
 			renderText("diningfail");
@@ -226,9 +235,9 @@ public class ShopController extends Controller {
 		String city = r.getParameter("city");
 
 		JSONArray json = new JSONArray();
-
-		List<Record> R = Db.find("select shop_name,shop_description,shop_img_small from shop where shop_city =" + city
-				+ "and shop_type = '2'");
+		//有错误
+		List<Record> R = Db.find("select id,shop_name,shop_description,shop_img_small from shop where shop_city =" + "\""+city+"\""
+				+ "and shop_type = \'2\'");
 
 		if (R == null) {
 			renderText("diningfail");
@@ -256,7 +265,7 @@ public class ShopController extends Controller {
 		JSONArray json = new JSONArray();
 		List<Record> R = Db
 				.find("select shop_img_big,now_type1,now_type2,now_type3,all_type1,all_type2,all_type3,shop_address from shop,ordernum where id = shop_id ="
-						+ shopid);
+						+ "\""+shopid+"\"");
 
 		if (R == null) {
 			renderText("saofail");
@@ -278,7 +287,7 @@ public class ShopController extends Controller {
 
 		List<Record> R = Db
 				.find("select shop_img_big,now_type1,now_type2,now_type3,all_type1,all_type2,all_type3,shop_address from shop,ordernum where id = shop_id ="
-						+ shopid);
+						+ "\""+shopid+"\"");
 
 		if (R == null) {
 			renderText("storefail");
@@ -334,61 +343,216 @@ public class ShopController extends Controller {
 				//密码不正确
 				renderText("1");
 			}else{
-				//用户名密码正确
-				renderText("2");
+				//用户名密码正确,返回商家的ID
+				renderText(shop2.get(0).getId().toString());
 			}
 			
 		}
 	}
-	
+	public void isregister(){
+		HttpServletRequest r = getRequest();
+		String shop_id = r.getParameter("shop_id");
+		
+		List<Shop> shop = Shop.dao.find("select * from shop where shop_id ="+ shop_id);
+		if(!shop.isEmpty()){
+			//用户名存在
+			renderText("1");
+		}else{
+			//用户名不存在
+			renderText("0");
+		}
+	}
 	
 	public void register(){
 		HttpServletRequest r = getRequest();
 		String shop_id = r.getParameter("shop_id");
 		String shop_pwd = r.getParameter("shop_pwd");
 		
-		Shop s = new Shop();
-		s.setShopId(Integer.parseInt(shop_id));
-		s.setShopPwd(shop_pwd);
-		boolean b = s.save();
-		if(b == true){
-			Ordernum o = new Ordernum();
-			o.save();
+		List<Shop> shop = Shop.dao.find("select * from shop where shop_id ="+ shop_id);
+		if(!shop.isEmpty()){
+			//用户名存在
+			renderText("2");
+			System.out.println("2");
+		}else{
+			Shop s = new Shop();
+			s.setShopId(shop_id);
+			s.setShopPwd(shop_pwd);
+			boolean b = s.save();
+			if(b == true){
+				Ordernum o = new Ordernum();
+				o.setShopId(s.getId());
+				o.setAllType1(0);
+				o.setNowType1(0);
+				boolean bl = o.save();
+				if(bl == true){
+					renderText(s.getId().toString());
+					System.out.println(s.getId().toString());
+					}
+				else{
+					renderText("0");
+					System.out.println("0");
+				}
+			}else{
+				renderText("0");
+				System.out.println("0.0");
+			}
 		}
 	}
 	
 	public void change_shop_smallimg(){
+		HttpServletRequest r = getRequest();
+		String id = r.getParameter("id");
+		String url = r.getParameter("smallimg_url");
 		
+		List<Shop> shop = Shop.dao.find("select * from shop where id ="+ id);
+		shop.get(0).setShopImgSmall(url);
+		boolean b = shop.get(0).update();
+		if(b == true){
+			//更新成功
+			renderText("1");
+		}else{
+			//更新失败
+			renderText("0");
+		}
 	}
 	public void change_shop_bigimg(){
+		HttpServletRequest r = getRequest();
+		String id = r.getParameter("id");
+		String url = r.getParameter("bigimg_url");
 		
+		List<Shop> shop = Shop.dao.find("select * from shop where id ="+ id);
+		shop.get(0).setShopImgBig(url);
+		boolean b = shop.get(0).update();
+		if(b == true){
+			//更新成功
+			renderText("1");
+		}else{
+			//更新失败
+			renderText("0");
+		}
 	}
 	public void change_shop_name(){
+		HttpServletRequest r = getRequest();
+		String id = r.getParameter("id");
+		String name = r.getParameter("name");
 		
+		List<Shop> shop = Shop.dao.find("select * from shop where id ="+ id);
+		shop.get(0).setShopName(name);
+		boolean b = shop.get(0).update();
+		if(b == true){
+			//更新成功
+			renderText("1");
+		}else{
+			//更新失败
+			renderText("0");
+		}
 	}
 	public void change_shop_type(){
+		HttpServletRequest r = getRequest();
+		String id = r.getParameter("id");
+		String type = r.getParameter("type");
 		
+		List<Shop> shop = Shop.dao.find("select * from shop where id ="+ id);
+		shop.get(0).setShopType(type);
+		boolean b = shop.get(0).update();
+		if(b == true){
+			//更新成功
+			renderText("1");
+		}else{
+			//更新失败
+			renderText("0");
+		}
 	}
 	public void change_shop_city(){
+		HttpServletRequest r = getRequest();
+		String id = r.getParameter("id");
+		String city = r.getParameter("city");
 		
+		List<Shop> shop = Shop.dao.find("select * from shop where id ="+ id);
+		shop.get(0).setShopCity(city);
+		boolean b = shop.get(0).update();
+		if(b == true){
+			//更新成功
+			renderText("1");
+		}else{
+			//更新失败
+			renderText("0");
+		}
 	}
 	public void change_shop_address(){
+		HttpServletRequest r = getRequest();
+		String id = r.getParameter("id");
+		String address = r.getParameter("address");
 		
+		List<Shop> shop = Shop.dao.find("select * from shop where id ="+ id);
+		shop.get(0).setShopAddress(address);
+		boolean b = shop.get(0).update();
+		if(b == true){
+			//更新成功
+			renderText("1");
+		}else{
+			//更新失败
+			renderText("0");
+		}
 	}
 	public void change_shop_tel(){
+		HttpServletRequest r = getRequest();
+		String id = r.getParameter("id");
+		String tel = r.getParameter("tel");
 		
+		List<Shop> shop = Shop.dao.find("select * from shop where id ="+ id);
+		shop.get(0).setShopTel(tel);
+		boolean b = shop.get(0).update();
+		if(b == true){
+			//更新成功
+			renderText("1");
+		}else{
+			//更新失败
+			renderText("0");
+		}
 	}
 	//有待考虑   主要问题，数据库内没有对应列
 	public void change_shop_ordertype(){
 		
 	}
 	public void change_shop_loginname(){
+		HttpServletRequest r = getRequest();
+		String id = r.getParameter("id");
+		String loginname = r.getParameter("loginname");
 		
+		List<Shop> shop = Shop.dao.find("select * from shop where id ="+ id);
+		shop.get(0).setShopId(loginname);
+		boolean b = shop.get(0).update();
+		if(b == true){
+			//更新成功
+			renderText("1");
+		}else{
+			//更新失败
+			renderText("0");
+		}
 	}
 	public void change_shop_pwd(){
+		HttpServletRequest r = getRequest();
+		String id = r.getParameter("id");
+		String pwd = r.getParameter("pwd");
 		
+		List<Shop> shop = Shop.dao.find("select * from shop where id ="+ id);
+		shop.get(0).setShopPwd(pwd);
+		boolean b = shop.get(0).update();
+		if(b == true){
+			//更新成功
+			renderText("1");
+		}else{
+			//更新失败
+			renderText("0");
+		}
 	}
 	public void click(){
+		HttpServletRequest r = getRequest();
+		String id = r.getParameter("id");
+		String type = r.getParameter("type");
 		
+		Shop_client_logic cl = new Shop_client_logic(id,type);
+		renderText(cl.click());
 	}
 }
