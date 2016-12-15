@@ -73,14 +73,27 @@ public class Shop_client_logic {
 			return "0";
 		}
 		on.update();
-		PushController(now);
-		PushController(now,all);
-		
-		return "1";
+		StatusController(now,shop_id,type);
+		if(PushController(now)){
+			if(PushController(now,all)){
+				return "1";
+			}else{
+				return "0";
+			}
+		}else{
+			return "0";
+		}
 	}
+	private void StatusController(int now,String shop_id,String type) {
+		// TODO Auto-generated method stub
+		List<Ordertab> list = Ordertab.dao.find("select * from ordernum where shop_id=" + "\""+shop_id+"\""+"and type = "+"\""+type+"\""+"and num = "+"\""+now+"\"");
+		list.get(0).setStatus("0");
+		list.get(0).update();
+	}
+
 	private boolean PushController(int now){
 		
-		List<Record> R = Db.find("select push_id from user,ordertab where user.id = ordertab.user_id and shop_id = " + shop_id +" and type = "+ type +" and num = "+now);
+		List<Record> R = Db.find("select push_id from user,ordertab where user.id = ordertab.user_id and shop_id = " + "\""+shop_id+"\"" +" and type = "+ "\""+type+"\"" +" and num = "+"\""+now+"\"");
 
 		String s = R.get(0).getColumns().toString();
 		try {
@@ -101,11 +114,12 @@ public class Shop_client_logic {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	return true;
+		return true;
+
 	}
 private boolean PushController(int now,int all){
 		
-		List<User> o = User.dao.find("select push_id from user,ordertab where user.id = ordertab.user_id and shop_id = " + shop_id +" and type = "+ type +" and num > "+"\""+now+"\"" + "and num <=" + "\""+all +"\"");
+		List<User> o = User.dao.find("select push_id from user,ordertab where user.id = ordertab.user_id and shop_id = " +"\""+shop_id+"\"" +" and type = "+ "\""+type+"\"" +" and num > "+"\""+now+"\"" + "and num <=" + "\""+all +"\"");
 		String s = "";
 		for (int i = 0; i < o.size(); i++) {
 			if(i == o.size()-1)
@@ -126,9 +140,6 @@ private boolean PushController(int now,int all){
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-		
-	return true;
+		return true;
 	}
 }

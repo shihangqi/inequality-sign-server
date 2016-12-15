@@ -65,4 +65,28 @@ public abstract class BaseOrdernum<M extends BaseOrdernum<M>> extends Model<M> i
 		return get("all_type3");
 	}
 
+	public void setNameType1(java.lang.String nameType1) {
+		set("name_type1", nameType1);
+	}
+
+	public java.lang.String getNameType1() {
+		return get("name_type1");
+	}
+
+	public void setNameType2(java.lang.String nameType2) {
+		set("name_type2", nameType2);
+	}
+
+	public java.lang.String getNameType2() {
+		return get("name_type2");
+	}
+
+	public void setNameType3(java.lang.String nameType3) {
+		set("name_type3", nameType3);
+	}
+
+	public java.lang.String getNameType3() {
+		return get("name_type3");
+	}
+
 }

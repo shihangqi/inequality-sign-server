@@ -27,8 +27,16 @@ public class Client_logic {
 	}
 
 	public JSONObject join(){
+		List<Ordertab> l = Ordertab.dao.find("select * from ordertab where shop_id=" + "\""+shop_id+"\""+"and user_id = "+"\""+user_id+"\""+"and status = \'1\'" );
 		if(user_id == null || shop_id == null || type == null){
 			return(new JSONObject());
+		}else if(!l.isEmpty()){
+			try {
+				return(new JSONObject().put("result", "fail"));
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		int all = 0;
 		int now;
@@ -47,12 +55,13 @@ public class Client_logic {
 		case "2":
 			all = on.getAllType2() + 1;
 			now = on.getNowType2();
-			on.setAllType1(all);
+			on.setAllType2(all);
 			break;
 		case "3":
 			all = on.getAllType3() + 1;
 			now = on.getNowType3();
-			on.setAllType1(all);
+			on.setAllType3(all);
+			System.out.println("------------");
 			break;
 		default:
 			return(new JSONObject());

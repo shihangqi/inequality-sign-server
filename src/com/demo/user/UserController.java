@@ -14,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Attr;
 
+import com.demo.common.model.Ordernum;
 import com.demo.common.model.Ordertab;
 import com.demo.common.model.Shop;
 import com.demo.common.model.User;
@@ -74,23 +75,6 @@ public class UserController extends Controller {
 	}
 
 	public void test() {
-		// 本机访问 localhost/User/test 或127.0.0.1/User/test
-		// 内网访问 本机ip/User/test
-		// 服务器端获取请求后 返回结果
-		// 返回字符串 renderText
-		// 返回html render（）；
-		// 快捷键 alt+/
-		// 2.2返回htmlsetAttr("UserPage", User.me.paginate(getParaToInt(0, 1),
-		// 10));render("User.html");
-
-		// 2.3返回xml (无参数）renderXml("NewFile.xml");
-		// 返回xml（有参数）
-		//
-		// setAttr("UserPage", User.me.paginate(getParaToInt(0, 1), 10));
-		// renderXml("NewFile.xml");
-
-		// 2.4返回jason
-
 //		HttpServletRequest r = getRequest();
 //		String username = r.getParameter("username");
 //		List<User> user = User.dao.find("select * from user where user_tel" + "=" + "\"" + username + "\"");
@@ -103,42 +87,15 @@ public class UserController extends Controller {
 //			// 用户名存在
 //			renderText("1");
 //			System.out.println("1");
-			Push push = new Push();
-			try {
-				push.sendAndroidUnicast("Ap1QhU2l9SL-sL_rlygx0AV9tmHzTACX-6TaTPsmW4ii");
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
+//			Push push = new Push();
+//			try {
+//				push.sendAndroidUnicast("Ap1QhU2l9SL-sL_rlygx0AV9tmHzTACX-6TaTPsmW4ii");
+//			} catch (Exception e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 //		}
 
-//		List<User> ls = new ArrayList<User>();
-//
-//		User object = new User();
-//		object.setId(123);
-//		object.setUserTel("测试1");
-//		object.setUserName("内容1");
-//		ls.add(object);
-//		User object1 = new User();
-//		object1.setId(1234);
-//		object1.setUserTel("测试2");
-//		object1.setUserName("内容2");
-//		ls.add(object1);
-//		User object2 = new User();
-//		object2.setId(1233);
-//		object2.setUserTel("测试3");
-//		object2.setUserName("内容3");
-//		ls.add(object2);
-//		renderJson(ls);
-		// //或者 List<User> ls =User.me.find("select * from blo g");
-		//
-		// 3 获取客户端请求参数
-		// 3.1 jfinal框架支持的url映射方式：http://10..7.88.11/User/edit/21
-		// 获取方法：getPareToInt()
-		// 3.2 传统web请求方式
-		// HttpServletRequest r = getRequest();
-		// String uname = r.getParameter("name");//参数key 返回value
 	}
 
 	public void login() {
@@ -192,6 +149,30 @@ public class UserController extends Controller {
 		}
 	}
 
+	public void getmessage(){
+		HttpServletRequest r = getRequest();
+		String id = r.getParameter("id");
+		JSONObject json = new JSONObject();
+		List<User> list = User.dao.find("select * from user where id" + "=" + "\"" + id + "\"");
+		
+		if (list.isEmpty()) {
+			renderText(json.toString());
+		} else {
+			try {
+				json.put("name", list.get(0).getUserName());
+				json.put("sex", list.get(0).getUserSex());
+				json.put("img", list.get(0).getUserImg());
+				System.out.println(json.toString());
+				renderText(json.toString());
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	}
+	
+	
 	public void changeimg() {
 		HttpServletRequest r = getRequest();
 		String user_img = r.getParameter("user_img");

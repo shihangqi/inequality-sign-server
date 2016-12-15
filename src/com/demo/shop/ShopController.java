@@ -1,8 +1,12 @@
 package com.demo.shop;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONArray;
@@ -20,6 +24,7 @@ import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.upload.UploadFile;
 
 /**
  * ServerController 所有 sql 与业务逻辑写在 Model 或 Service 中，不要写在 Controller
@@ -27,6 +32,7 @@ import com.jfinal.plugin.activerecord.Record;
  */
 @Before(ShopInterceptor.class)
 public class ShopController extends Controller {
+	public static int FILENUME = 0;	
 	public void index() {
 		setAttr("shopPage", Shop.dao.paginate(getParaToInt(0, 1), 10));
 		render("shop.html");
@@ -62,7 +68,8 @@ public class ShopController extends Controller {
 		String city = r.getParameter("city");
 		JSONArray json = new JSONArray();
 		List<Record> R = Db
-				.find("select shop_name, count(shop.id), shop_address,shop_img_small from ordertab,shop where ordertab.shop_id = shop.id and shop_city = "+city+ " group by shop.id order by count(shop.id) DESC");
+				.find("select shop_name, count(shop.id), shop_address,shop_img_small from ordertab,shop where ordertab.shop_id = shop.id and shop_city = "
+						+"\""+city+"\"" + " group by shop.id order by count(shop.id) DESC");
 		if (R == null) {
 			renderText("listfail");
 		} else {
@@ -149,7 +156,8 @@ public class ShopController extends Controller {
 		JSONArray json = new JSONArray();
 		System.out.println(city);
 		// 缺少order by 排队的人数大小
-		List<Record> R = Db.find("select id,shop_name,shop_description,shop_img_small from shop where shop_city =" + city);
+		List<Record> R = Db
+				.find("select id,shop_name,shop_description,shop_img_small from shop where shop_city =" + "\""+city+"\"");
 
 		if (R == null) {
 			renderText("homefail");
@@ -165,40 +173,26 @@ public class ShopController extends Controller {
 					json.put(R.get(i).getColumns());
 				}
 			}
-			
+
 			renderText(json.toString());
 			System.out.println(json.toString());
 		}
 	}
 
-	// 改变地址这点再想想，计划是改变地址只在商家端有，在客户端只存本地，每次上传的时候上传上城市信息，查找时查商家端的城市信息；
-	// public void changelocale(){
-	// HttpServletRequest r = getRequest();
-	// String city = r.getParameter("city");
-	// JSONArray json = new JSONArray();
-	//
-	// List<Record> R = Db.find("");
-	// for (int i = 0; i < R.size(); i++) {
-	// System.out.println(R.get(i).getColumns());
-	// json.put(R.get(i).getColumns());
-	// }
-	// System.out.println(json.toString());
-	// renderJson(json);
-	// }
 	// 搜索功能
 	public void search() {
 		HttpServletRequest r = getRequest();
 		String city = r.getParameter("city");
 		String content = r.getParameter("content");
 		JSONArray json = new JSONArray();
-		List<Record> R = Db.find("select id,shop_name,shop_description,shop_img_small from shop where shop_name like "+"\"%"
-				+ content + "%\""+" and shop_city = " + "\"" + city+ "\"");
-		
-
-		if (R == null) {
+		List<Record> R = Db.find("select id,shop_name,shop_description,shop_img_small from shop where shop_name like "
+				+ "\"%" + content + "%\"" + " and shop_city = " + "\"" + city + "\"");
+		if (R.toString() == "[]"){
 			renderText("searchfail");
 		} else {
-			json.put(R.get(0).getColumns());
+			for (int i = 0; i < R.size(); i++) {
+				json.put(R.get(i).getColumns());
+			}
 			renderText(json.toString());
 		}
 	}
@@ -209,7 +203,8 @@ public class ShopController extends Controller {
 
 		JSONArray json = new JSONArray();
 
-		List<Record> R = Db.find("select id,shop_name,shop_description,shop_img_small from shop where shop_city =" + "\""+city+"\""+ "and shop_type = \'1\'");
+		List<Record> R = Db.find("select id,shop_name,shop_description,shop_img_small from shop where shop_city ="
+				+ "\"" + city + "\"" + "and shop_type = \'1\'");
 
 		if (R == null) {
 			renderText("diningfail");
@@ -235,9 +230,9 @@ public class ShopController extends Controller {
 		String city = r.getParameter("city");
 
 		JSONArray json = new JSONArray();
-		//有错误
-		List<Record> R = Db.find("select id,shop_name,shop_description,shop_img_small from shop where shop_city =" + "\""+city+"\""
-				+ "and shop_type = \'2\'");
+		// 有错误
+		List<Record> R = Db.find("select id,shop_name,shop_description,shop_img_small from shop where shop_city ="
+				+ "\"" + city + "\"" + "and shop_type = \'2\'");
 
 		if (R == null) {
 			renderText("diningfail");
@@ -264,8 +259,8 @@ public class ShopController extends Controller {
 
 		JSONArray json = new JSONArray();
 		List<Record> R = Db
-				.find("select shop_img_big,now_type1,now_type2,now_type3,all_type1,all_type2,all_type3,shop_address from shop,ordernum where id = shop_id ="
-						+ "\""+shopid+"\"");
+				.find("select shop_img_big,now_type1,now_type2,now_type3,all_type1,all_type2,all_type3,name_type1,name_type2,name_type3,shop_address from shop,ordernum where id = shop_id ="
+						+ "\"" + shopid + "\"");
 
 		if (R == null) {
 			renderText("saofail");
@@ -284,10 +279,10 @@ public class ShopController extends Controller {
 		HttpServletRequest r = getRequest();
 		String shopid = r.getParameter("shop_id");
 		JSONArray json = new JSONArray();
-
+		JSONObject json1 = new JSONObject();
 		List<Record> R = Db
-				.find("select shop_img_big,now_type1,now_type2,now_type3,all_type1,all_type2,all_type3,shop_address from shop,ordernum where id = shop_id ="
-						+ "\""+shopid+"\"");
+				.find("select shop_img_big,now_type1,now_type2,now_type3,all_type1,all_type2,all_type3,name_type1,name_type2,name_type3,shop_address from shop,ordernum where shop.id = ordernum.shop_id and ordernum.shop_id="
+						+ "\"" + shopid + "\"");
 
 		if (R == null) {
 			renderText("storefail");
@@ -296,8 +291,15 @@ public class ShopController extends Controller {
 				System.out.println(R.get(i).getColumns());
 				json.put(R.get(i).getColumns());
 			}
+			String s = null;
+			try {
+				s = json.get(0).toString();
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			System.out.println(json.toString());
-			renderText(json.toString());
+			renderText(s);
 		}
 	}
 
@@ -316,6 +318,7 @@ public class ShopController extends Controller {
 			System.out.println(json.toString());
 		}
 	}
+
 	/**
 	 * 商家端接口
 	 */
@@ -323,236 +326,381 @@ public class ShopController extends Controller {
 		HttpServletRequest r = getRequest();
 		String shop_id = r.getParameter("shop_id");
 		String shop_pwd = r.getParameter("shop_pwd");
-		
-		List<Shop> shop = Shop.dao.find("select * from shop where shop_id ="+ shop_id);
+
+		List<Shop> shop = Shop.dao.find("select * from shop where shop_id =" + shop_id);
 		// 判断是否是新用户
-//		if (shopid.isEmpty()) {
-//			Shop s = new Shop();
-//			s.setShopId(Integer.parseInt(shop_id));
-//			s.save();
-//		}
+		// if (shopid.isEmpty()) {
+		// Shop s = new Shop();
+		// s.setShopId(Integer.parseInt(shop_id));
+		// s.save();
+		// }
 		if (shop.isEmpty()) {
-			//用户名不存在
+			// 用户名不存在
 			renderText("0");
-		}else{
-			//用户名存在
-			List<Shop> shop2 = Shop.dao.
-					find("select * from shop where shop_id" + "=" + "\"" + shop_id + "\""
-							+ "and shop_pwd=" + "\"" + shop_pwd + "\"");
+		} else {
+			// 用户名存在
+			List<Shop> shop2 = Shop.dao.find("select * from shop where shop_id" + "=" + "\"" + shop_id + "\""
+					+ "and shop_pwd=" + "\"" + shop_pwd + "\"");
 			if (shop2.isEmpty()) {
-				//密码不正确
-				renderText("1");
-			}else{
-				//用户名密码正确,返回商家的ID
+				// 密码不正确
+				renderText("fail");
+			} else {
+				// 用户名密码正确,返回商家的ID
 				renderText(shop2.get(0).getId().toString());
 			}
-			
+
 		}
 	}
-	public void isregister(){
+
+	public void isregister() {
 		HttpServletRequest r = getRequest();
 		String shop_id = r.getParameter("shop_id");
-		
-		List<Shop> shop = Shop.dao.find("select * from shop where shop_id ="+ shop_id);
-		if(!shop.isEmpty()){
-			//用户名存在
+
+		List<Shop> shop = Shop.dao.find("select * from shop where shop_id =" + shop_id);
+		if (!shop.isEmpty()) {
+			// 用户名存在
 			renderText("1");
-		}else{
-			//用户名不存在
+		} else {
+			// 用户名不存在
 			renderText("0");
 		}
 	}
-	
-	public void register(){
+
+	public void register() {
 		HttpServletRequest r = getRequest();
 		String shop_id = r.getParameter("shop_id");
 		String shop_pwd = r.getParameter("shop_pwd");
-		
-		List<Shop> shop = Shop.dao.find("select * from shop where shop_id ="+ shop_id);
-		if(!shop.isEmpty()){
-			//用户名存在
-			renderText("2");
-			System.out.println("2");
-		}else{
+
+		List<Shop> shop = Shop.dao.find("select * from shop where shop_id =" + shop_id);
+		if (!shop.isEmpty()) {
+			// 用户名存在
+			renderText("exist");
+		} else {
 			Shop s = new Shop();
 			s.setShopId(shop_id);
 			s.setShopPwd(shop_pwd);
 			boolean b = s.save();
-			if(b == true){
+			if (b == true) {
 				Ordernum o = new Ordernum();
 				o.setShopId(s.getId());
 				o.setAllType1(0);
 				o.setNowType1(0);
+				o.setNameType1("业务1");
 				boolean bl = o.save();
-				if(bl == true){
+				if (bl == true) {
 					renderText(s.getId().toString());
 					System.out.println(s.getId().toString());
-					}
-				else{
+				} else {
 					renderText("0");
 					System.out.println("0");
 				}
-			}else{
+			} else {
 				renderText("0");
-				System.out.println("0.0");
+				System.out.println("0");
 			}
 		}
 	}
-	
-	public void change_shop_smallimg(){
+
+	public void getmessage(){
 		HttpServletRequest r = getRequest();
 		String id = r.getParameter("id");
-		String url = r.getParameter("smallimg_url");
+		JSONArray json = new JSONArray();
 		
-		List<Shop> shop = Shop.dao.find("select * from shop where id ="+ id);
-		shop.get(0).setShopImgSmall(url);
-		boolean b = shop.get(0).update();
-		if(b == true){
-			//更新成功
-			renderText("1");
-		}else{
-			//更新失败
+		List<Record> R = Db.find("select shop_img_small,shop_name,shop_type,shop_description,shop_city,shop_address,shop_tel,shop_img_big from shop where id ="+"\""+id+"\"");
+	
+		if (R == null) {
 			renderText("0");
+		} else {
+			for (int i = 0; i < R.size(); i++) {
+				System.out.println(R.get(i).getColumns());
+				json.put(R.get(i).getColumns());
+			}
+			System.out.println(json.toString());
+			renderText(json.toString());
+		}
+		
+	}
+	public void change_shop_description(){
+		HttpServletRequest r = getRequest();
+		String id = r.getParameter("id");
+		String description = r.getParameter("description");
+
+		if (description == "" || description == null) {
+			renderText("0");
+		} else {
+			List<Shop> shop = Shop.dao.find("select * from shop where id =" + id);
+			shop.get(0).setShopDescription(description);
+			boolean b = shop.get(0).update();
+			if (b == true) {
+				// 更新成功
+				renderText("1");
+			} else {
+				// 更新失败
+				renderText("0");
+			}
 		}
 	}
-	public void change_shop_bigimg(){
+	public void change_shop_smallimg() {
+		HttpServletRequest r = getRequest();
+		String id = r.getParameter("id");
+		String url = FileControl(r);
+
+		System.out.println(url);
+		if (url == "" || url == null) {
+			renderText("0");
+		} else {
+			List<Shop> shop = Shop.dao.find("select * from shop where id =" + id);
+			shop.get(0).setShopImgSmall(url);
+			boolean b = shop.get(0).update();
+			if (b == true) {
+				// 更新成功
+				renderText("1");
+			} else {
+				// 更新失败
+				renderText("0");
+			}
+		}
+	}
+
+	public void change_shop_bigimg() {
 		HttpServletRequest r = getRequest();
 		String id = r.getParameter("id");
 		String url = r.getParameter("bigimg_url");
-		
-		List<Shop> shop = Shop.dao.find("select * from shop where id ="+ id);
-		shop.get(0).setShopImgBig(url);
-		boolean b = shop.get(0).update();
-		if(b == true){
-			//更新成功
-			renderText("1");
-		}else{
-			//更新失败
+
+		if (url == "" || url == null) {
 			renderText("0");
+		} else {
+			List<Shop> shop = Shop.dao.find("select * from shop where id =" + id);
+			shop.get(0).setShopImgBig(url);
+			boolean b = shop.get(0).update();
+			if (b == true) {
+				// 更新成功
+				renderText("1");
+			} else {
+				// 更新失败
+				renderText("0");
+			}
 		}
 	}
-	public void change_shop_name(){
+
+	public void change_shop_name() {
 		HttpServletRequest r = getRequest();
 		String id = r.getParameter("id");
 		String name = r.getParameter("name");
-		
-		List<Shop> shop = Shop.dao.find("select * from shop where id ="+ id);
-		shop.get(0).setShopName(name);
-		boolean b = shop.get(0).update();
-		if(b == true){
-			//更新成功
-			renderText("1");
-		}else{
-			//更新失败
+
+		if (name == "" || name == null) {
 			renderText("0");
+		} else {
+			List<Shop> shop = Shop.dao.find("select * from shop where id =" + id);
+			shop.get(0).setShopName(name);
+			boolean b = shop.get(0).update();
+			if (b == true) {
+				// 更新成功
+				renderText("1");
+			} else {
+				// 更新失败
+				renderText("0");
+			}
 		}
 	}
-	public void change_shop_type(){
+
+	public void change_shop_type() {
 		HttpServletRequest r = getRequest();
 		String id = r.getParameter("id");
 		String type = r.getParameter("type");
-		
-		List<Shop> shop = Shop.dao.find("select * from shop where id ="+ id);
-		shop.get(0).setShopType(type);
-		boolean b = shop.get(0).update();
-		if(b == true){
-			//更新成功
-			renderText("1");
-		}else{
-			//更新失败
+
+		if (type == "" || type == null) {
 			renderText("0");
+		} else {
+			List<Shop> shop = Shop.dao.find("select * from shop where id =" + id);
+			shop.get(0).setShopType(type);
+			boolean b = shop.get(0).update();
+			if (b == true) {
+				// 更新成功
+				renderText("1");
+			} else {
+				// 更新失败
+				renderText("0");
+			}
 		}
 	}
-	public void change_shop_city(){
+
+	public void change_shop_city() {
 		HttpServletRequest r = getRequest();
 		String id = r.getParameter("id");
 		String city = r.getParameter("city");
-		
-		List<Shop> shop = Shop.dao.find("select * from shop where id ="+ id);
-		shop.get(0).setShopCity(city);
-		boolean b = shop.get(0).update();
-		if(b == true){
-			//更新成功
-			renderText("1");
-		}else{
-			//更新失败
+		if (city == "" || city == null) {
 			renderText("0");
+		} else {
+			List<Shop> shop = Shop.dao.find("select * from shop where id =" + id);
+			shop.get(0).setShopCity(city);
+			boolean b = shop.get(0).update();
+			if (b == true) {
+				// 更新成功
+				renderText("1");
+			} else {
+				// 更新失败
+				renderText("0");
+			}
 		}
 	}
-	public void change_shop_address(){
+
+	public void change_shop_address() {
 		HttpServletRequest r = getRequest();
 		String id = r.getParameter("id");
 		String address = r.getParameter("address");
-		
-		List<Shop> shop = Shop.dao.find("select * from shop where id ="+ id);
-		shop.get(0).setShopAddress(address);
-		boolean b = shop.get(0).update();
-		if(b == true){
-			//更新成功
-			renderText("1");
-		}else{
-			//更新失败
+
+		if (address == "" || address == null) {
 			renderText("0");
+		} else {
+			List<Shop> shop = Shop.dao.find("select * from shop where id =" + id);
+			shop.get(0).setShopAddress(address);
+			boolean b = shop.get(0).update();
+			if (b == true) {
+				// 更新成功
+				renderText("1");
+			} else {
+				// 更新失败
+				renderText("0");
+			}
 		}
 	}
-	public void change_shop_tel(){
+
+	public void change_shop_tel() {
 		HttpServletRequest r = getRequest();
 		String id = r.getParameter("id");
 		String tel = r.getParameter("tel");
-		
-		List<Shop> shop = Shop.dao.find("select * from shop where id ="+ id);
-		shop.get(0).setShopTel(tel);
-		boolean b = shop.get(0).update();
-		if(b == true){
-			//更新成功
-			renderText("1");
-		}else{
-			//更新失败
+		if (tel == "" || tel == null) {
 			renderText("0");
+		} else {
+			List<Shop> shop = Shop.dao.find("select * from shop where id =" + id);
+			shop.get(0).setShopTel(tel);
+			boolean b = shop.get(0).update();
+			if (b == true) {
+				// 更新成功
+				renderText("1");
+			} else {
+				// 更新失败
+				renderText("0");
+			}
 		}
 	}
-	//有待考虑   主要问题，数据库内没有对应列
-	public void change_shop_ordertype(){
-		
-	}
-	public void change_shop_loginname(){
-		HttpServletRequest r = getRequest();
-		String id = r.getParameter("id");
-		String loginname = r.getParameter("loginname");
-		
-		List<Shop> shop = Shop.dao.find("select * from shop where id ="+ id);
-		shop.get(0).setShopId(loginname);
-		boolean b = shop.get(0).update();
-		if(b == true){
-			//更新成功
-			renderText("1");
-		}else{
-			//更新失败
-			renderText("0");
-		}
-	}
-	public void change_shop_pwd(){
-		HttpServletRequest r = getRequest();
-		String id = r.getParameter("id");
-		String pwd = r.getParameter("pwd");
-		
-		List<Shop> shop = Shop.dao.find("select * from shop where id ="+ id);
-		shop.get(0).setShopPwd(pwd);
-		boolean b = shop.get(0).update();
-		if(b == true){
-			//更新成功
-			renderText("1");
-		}else{
-			//更新失败
-			renderText("0");
-		}
-	}
-	public void click(){
+
+	public void change_shop_ordertype() {
 		HttpServletRequest r = getRequest();
 		String id = r.getParameter("id");
 		String type = r.getParameter("type");
 		
-		Shop_client_logic cl = new Shop_client_logic(id,type);
-		renderText(cl.click());
+		if (type == "" || type == null) {
+			renderText("0");
+		} else if(type.equals("业务1")){
+			renderText("1");
+		}else {
+			List<Ordernum> order = Ordernum.dao.find("select * from Ordernum where shop_id =" + id);
+			if(order.get(0).getNameType1().equals("业务1")){
+				order.get(0).setNameType1(type);
+			}else if(order.get(0).getNameType2() == null){
+				order.get(0).setNameType2(type);
+				order.get(0).setAllType2(0);
+				order.get(0).setNowType2(0);
+			}else if(order.get(0).getNameType3() == null){
+				order.get(0).setNameType3(type);
+				order.get(0).setAllType3(0);
+				order.get(0).setNowType3(0);
+			}else{
+				renderText("0");
+			}
+			boolean b = order.get(0).update();
+			if (b == true) {
+				// 更新成功
+				renderText("1");
+			} else {
+				// 更新失败
+				renderText("0");
+			}
+		}
+	}
+
+	public void change_shop_loginname() {
+		HttpServletRequest r = getRequest();
+		String id = r.getParameter("id");
+		String loginname = r.getParameter("loginname");
+		if (loginname == "" || loginname == null) {
+			renderText("0");
+		} else {
+			List<Shop> shop = Shop.dao.find("select * from shop where id =" + id);
+			shop.get(0).setShopId(loginname);
+			boolean b = shop.get(0).update();
+			if (b == true) {
+				// 更新成功
+				renderText("1");
+			} else {
+				// 更新失败
+				renderText("0");
+			}
+		}
+	}
+
+	public void change_shop_pwd() {
+		HttpServletRequest r = getRequest();
+		String id = r.getParameter("id");
+		String pwd = r.getParameter("pwd");
+		if (pwd == "" || pwd == null) {
+			renderText("0");
+		} else {
+			List<Shop> shop = Shop.dao.find("select * from shop where id =" + id);
+			shop.get(0).setShopPwd(pwd);
+			boolean b = shop.get(0).update();
+			if (b == true) {
+				// 更新成功
+				renderText("1");
+			} else {
+				// 更新失败
+				renderText("0");
+			}
+		}
+
+	}
+
+	public void click() {
+		HttpServletRequest r = getRequest();
+		String id = r.getParameter("id");
+		String type = r.getParameter("type");
+		if (type == null || type == "") {
+			renderText("0");
+		} else {
+			Shop_client_logic cl = new Shop_client_logic(id, type);
+			renderText(cl.click());
+		}
+	}
+
+	private String FileControl(HttpServletRequest request){
+		ServletInputStream in;
+		try {
+			in = request.getInputStream();
+			//缓冲区  
+		    byte buffer[]=new byte[1024];  
+		    //写入服务器端固定路径磁盘中  
+		    String s = "F:\\eclipse\\inequality-sign-server\\WebRoot\\upload\\picture"+FILENUME+".jpg";
+		    System.out.println(s);
+		    FileOutputStream out= new FileOutputStream(s);  
+		    int len=in.read(buffer, 0, 1024);  
+
+		    //把流里的信息循环读入到file文件中  
+		    while( len!=-1 ){  
+		        System.out.println(len+"----------");  
+		        out.write(buffer, 0, len);  
+		        len=in.readLine(buffer, 0, 1024);  
+		        }  
+		      
+		    out.close();
+		    in.close();
+		    System.out.println("******************");
+		    FILENUME++;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		return "http://10.7.88.49:8090/upload/picture"+(FILENUME-1)+".jpg";
 	}
 }
