@@ -91,6 +91,7 @@ public class Client_logic {
 			json.put("type", type);
 			json.put("now",now);
 			json.put("shop_address", s.getShopAddress());
+			json.put("result", "success");
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -1,11 +1,17 @@
 package com.demo.user;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -14,6 +20,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Attr;
 
+import com.demo.common.model.Img;
 import com.demo.common.model.Ordernum;
 import com.demo.common.model.Ordertab;
 import com.demo.common.model.Shop;
@@ -31,6 +38,7 @@ import com.jfinal.upload.UploadFile;
  */
 @Before(UserInterceptor.class)
 public class UserController extends Controller {
+	public static final String FILEURL = "http://10.7.88.49:8090/upload/";
 	public void index() {
 		setAttr("userPage", User.dao.paginate(getParaToInt(0, 1), 10));
 		render("user.html");
@@ -95,7 +103,7 @@ public class UserController extends Controller {
 //				e.printStackTrace();
 //			}
 //		}
-
+        
 	}
 
 	public void login() {
@@ -174,17 +182,34 @@ public class UserController extends Controller {
 	
 	
 	public void changeimg() {
-		HttpServletRequest r = getRequest();
-		String user_img = r.getParameter("user_img");
-		String id = r.getParameter("id");
-		List<User> list = User.dao.find("select * from user where id" + "=" + "\"" + id + "\"");
-		User u = list.get(0);
-		u.setUserImg(user_img);
-		boolean b = u.update();
-		if (b == true) {
-			renderText("changeimgok");
-		} else {
-			renderText("changeimgfail");
+		UploadFile uploadFile = this.getFile();
+		String id = this.getPara("id");
+		
+		if(uploadFile == null || id == null){
+			renderText("uploadfail");
+		}else{
+			List<Img> l = Img.dao.find("select * from img where id =\'1\'");
+			int filenum = l.get(0).getNum();
+			boolean i = uploadFile.getFile().renameTo(new File("F:\\eclipse\\inequality-sign-server\\WebRoot\\upload\\"+"picture"+filenum+".jpg"));
+			
+			if(i){
+				String url = FILEURL + "picture"+filenum+".jpg";
+				filenum++;
+				List<User> list = User.dao.find("select * from shop where id ="+"\""+id+"\"");
+				list.get(0).setUserImg(url);
+				l.get(0).setNum(filenum);
+				boolean b = list.get(0).update();
+				boolean b1 = l.get(0).update();
+				if (b == true && b1 == true) {
+					// 更新成功
+					renderText(url);
+				} else {
+					// 更新失败
+					renderText("uploadfail");
+				}
+			}else{
+				renderText("uploadfail");
+			}
 		}
 	}
 

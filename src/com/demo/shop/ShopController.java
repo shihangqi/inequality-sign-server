@@ -1,5 +1,8 @@
 package com.demo.shop;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
@@ -13,6 +16,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.demo.common.model.Img;
 import com.demo.common.model.Ordernum;
 import com.demo.common.model.Ordertab;
 import com.demo.common.model.Scene;
@@ -32,7 +36,7 @@ import com.jfinal.upload.UploadFile;
  */
 @Before(ShopInterceptor.class)
 public class ShopController extends Controller {
-	public static int FILENUME = 0;	
+	public static final String FILEURL = "http://10.7.88.49:8090/upload/";
 	public void index() {
 		setAttr("shopPage", Shop.dao.paginate(getParaToInt(0, 1), 10));
 		render("shop.html");
@@ -133,19 +137,35 @@ public class ShopController extends Controller {
 
 	// 根据上传的图片地址，修改数据库中的数据
 	public void uploadscene() {
-		HttpServletRequest r = getRequest();
-		String scene_img = r.getParameter("scene_img");
-		String scene_content = r.getParameter("scene_content");
-
-		Scene s = new Scene();
-		s.setImg(scene_img);
-		s.setContent(scene_content);
-		boolean b = s.save();
-
-		if (b == true) {
-			renderText("uploadsceneok");
-		} else {
-			renderText("uploadscenefail");
+		UploadFile uploadFile = this.getFile();
+		String content = this.getPara("scene_content");
+		
+		if(uploadFile == null || content == null){
+			renderText("uploadfail");
+		}else{
+			List<Img> l = Img.dao.find("select * from img where id =\'1\'");
+			int filenum = l.get(0).getNum();
+			boolean i = uploadFile.getFile().renameTo(new File("F:\\eclipse\\inequality-sign-server\\WebRoot\\upload\\"+"picture"+filenum+".jpg"));
+			
+			if(i){
+				String url = FILEURL + "picture"+filenum+".jpg";
+				filenum++;
+				Scene s = new Scene();
+				s.setImg(url);
+				s.setContent(content);
+				l.get(0).setNum(filenum);
+				boolean b = s.save();
+				boolean b1 = l.get(0).update();
+				if (b == true && b1 == true) {
+					// 更新成功
+					renderText(url);
+				} else {
+					// 更新失败
+					renderText("uploadfail");
+				}
+			}else{
+				renderText("uploadfail");
+			}
 		}
 	}
 
@@ -318,7 +338,7 @@ public class ShopController extends Controller {
 			System.out.println(json.toString());
 		}
 	}
-
+	
 	/**
 	 * 商家端接口
 	 */
@@ -441,43 +461,66 @@ public class ShopController extends Controller {
 		}
 	}
 	public void change_shop_smallimg() {
-		HttpServletRequest r = getRequest();
-		String id = r.getParameter("id");
-		String url = FileControl(r);
-
-		System.out.println(url);
-		if (url == "" || url == null) {
+		UploadFile uploadFile = this.getFile();
+		String id = this.getPara("id");
+		
+		if(uploadFile == null || id == null){
 			renderText("0");
-		} else {
-			List<Shop> shop = Shop.dao.find("select * from shop where id =" + id);
-			shop.get(0).setShopImgSmall(url);
-			boolean b = shop.get(0).update();
-			if (b == true) {
-				// 更新成功
-				renderText("1");
-			} else {
-				// 更新失败
+		}else{
+			List<Img> l = Img.dao.find("select * from img where id =\'1\'");
+			int filenum = l.get(0).getNum();
+			boolean i = uploadFile.getFile().renameTo(new File("F:\\eclipse\\inequality-sign-server\\WebRoot\\upload\\"+"picture"+filenum+".jpg"));
+			
+			if(i){
+				String url = FILEURL + "picture"+filenum+".jpg";
+				filenum++;
+				List<Shop> list = Shop.dao.find("select * from shop where id ="+"\""+id+"\"");
+				list.get(0).setShopImgSmall(url);
+				l.get(0).setNum(filenum);
+				boolean b = list.get(0).update();
+				boolean b1 = l.get(0).update();
+				if (b == true && b1 == true) {
+					// 更新成功
+					renderText("1");
+				} else {
+					// 更新失败
+					renderText("0");
+				}
+			}else{
 				renderText("0");
 			}
 		}
+		
+		
 	}
 
 	public void change_shop_bigimg() {
-		HttpServletRequest r = getRequest();
-		String id = r.getParameter("id");
-		String url = r.getParameter("bigimg_url");
-
-		if (url == "" || url == null) {
+		UploadFile uploadFile = this.getFile();
+		String id = this.getPara("id");
+		
+		if(uploadFile == null || id == null){
 			renderText("0");
-		} else {
-			List<Shop> shop = Shop.dao.find("select * from shop where id =" + id);
-			shop.get(0).setShopImgBig(url);
-			boolean b = shop.get(0).update();
-			if (b == true) {
-				// 更新成功
-				renderText("1");
-			} else {
-				// 更新失败
+		}else{
+			List<Img> l = Img.dao.find("select * from img where id =\'1\'");
+			int filenum = l.get(0).getNum();
+			boolean i = uploadFile.getFile().renameTo(new File("F:\\eclipse\\inequality-sign-server\\WebRoot\\upload\\"+"picture"+filenum+".jpg"));
+			
+			if(i){
+				String url = FILEURL + "picture"+filenum+".jpg";
+				filenum++;
+				List<Shop> list = Shop.dao.find("select * from shop where id ="+"\""+id+"\"");
+				list.get(0).setShopImgBig(url);
+				l.get(0).setNum(filenum);
+				boolean b = list.get(0).update();
+				boolean b1 = l.get(0).update();
+				if (b == true && b1 == true) {
+					// 更新成功
+					renderText("1");
+				} else {
+					// 更新失败
+					renderText("0");
+				}
+			}else{
 				renderText("0");
 			}
 		}
@@ -597,30 +640,60 @@ public class ShopController extends Controller {
 			renderText("1");
 		}else {
 			List<Ordernum> order = Ordernum.dao.find("select * from Ordernum where shop_id =" + id);
-			if(order.get(0).getNameType1().equals("业务1")){
-				order.get(0).setNameType1(type);
-			}else if(order.get(0).getNameType2() == null){
-				order.get(0).setNameType2(type);
-				order.get(0).setAllType2(0);
-				order.get(0).setNowType2(0);
-			}else if(order.get(0).getNameType3() == null){
-				order.get(0).setNameType3(type);
-				order.get(0).setAllType3(0);
-				order.get(0).setNowType3(0);
+			if(order.get(0).getNameType1() == type || order.get(0).getNameType1() == type || order.get(0).getNameType1() == type){
+				renderText("2");
 			}else{
-				renderText("0");
+				if(order.get(0).getNameType1().equals("业务1")){
+					order.get(0).setNameType1(type);
+				}else if(order.get(0).getNameType2() == null){
+					order.get(0).setNameType2(type);
+					order.get(0).setAllType2(0);
+					order.get(0).setNowType2(0);
+				}else if(order.get(0).getNameType3() == null){
+					order.get(0).setNameType3(type);
+					order.get(0).setAllType3(0);
+					order.get(0).setNowType3(0);
+				}else{
+					renderText("0");
+				}
+				boolean b = order.get(0).update();
+				if (b == true) {
+					// 更新成功
+					renderText("1");
+				} else {
+					// 更新失败
+					renderText("0");
+				}
 			}
-			boolean b = order.get(0).update();
-			if (b == true) {
-				// 更新成功
+			}
+			
+	}
+
+	public void delete_shop_ordertype(){
+		HttpServletRequest r = getRequest();
+		String id = r.getParameter("id");
+		String type = r.getParameter("type");
+		if (type == "" || type == null) {
+			renderText("0");
+		}else{
+			List<Ordernum> order = Ordernum.dao.find("select * from Ordernum where shop_id =" + id);
+			if(order.get(0).getNameType1().equals(type)){
+				order.get(0).setNameType1(null);
+			}else if(order.get(0).getNameType2().equals(type)){
+				order.get(0).setNameType2(null);
+			}else if(order.get(0).getNameType3().equals(type)){
+				order.get(0).setNameType3(null);
+			}
+			boolean i = order.get(0).update();
+			if(i == true){
 				renderText("1");
-			} else {
-				// 更新失败
+			}else{
 				renderText("0");
 			}
 		}
 	}
-
+	
+	
 	public void change_shop_loginname() {
 		HttpServletRequest r = getRequest();
 		String id = r.getParameter("id");
@@ -673,16 +746,17 @@ public class ShopController extends Controller {
 			renderText(cl.click());
 		}
 	}
-
-	private String FileControl(HttpServletRequest request){
-		ServletInputStream in;
+	
+	public String filecontrol(UploadFile uploadfile){
+		File file = uploadfile.getFile();
+		FileInputStream in;
+		String url = null;
 		try {
-			in = request.getInputStream();
-			//缓冲区  
-		    byte buffer[]=new byte[1024];  
+			in = new FileInputStream(file);
+			String fileName=uploadfile.getOriginalFileName();
+			byte buffer[]=new byte[1024];  
 		    //写入服务器端固定路径磁盘中  
-		    String s = "F:\\eclipse\\inequality-sign-server\\WebRoot\\upload\\picture"+FILENUME+".jpg";
-		    System.out.println(s);
+		    String s = "F:\\eclipse\\inequality-sign-server\\WebRoot\\upload\\"+fileName;
 		    FileOutputStream out= new FileOutputStream(s);  
 		    int len=in.read(buffer, 0, 1024);  
 
@@ -690,17 +764,21 @@ public class ShopController extends Controller {
 		    while( len!=-1 ){  
 		        System.out.println(len+"----------");  
 		        out.write(buffer, 0, len);  
-		        len=in.readLine(buffer, 0, 1024);  
+		        len=in.read(buffer, 0, 1024);  
 		        }  
 		      
 		    out.close();
 		    in.close();
-		    System.out.println("******************");
-		    FILENUME++;
+		    url = FILEURL + fileName;
+		    System.out.println(url);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
-		return "http://10.7.88.49:8090/upload/picture"+(FILENUME-1)+".jpg";
+		}
+		return url;
 	}
+	
 }
