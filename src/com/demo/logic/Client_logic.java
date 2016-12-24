@@ -12,6 +12,9 @@ import org.json.JSONObject;
 import com.demo.common.model.Ordernum;
 import com.demo.common.model.Ordertab;
 import com.demo.common.model.Shop;
+import com.demo.push.Push;
+import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
 
 public class Client_logic {
 	
@@ -40,12 +43,14 @@ public class Client_logic {
 		}
 		int all = 0;
 		int now;
+		String name_type;
 		JSONObject json = new JSONObject();
 
 		List<Ordernum> list = Ordernum.dao.find("select * from ordernum where shop_id=" + shop_id);
 		Ordernum on = list.get(0);
 		switch (type) {
 		case "1":
+			name_type = on.getNameType1();
 			// 已取号
 			all = on.getAllType1() + 1;
 			// 当前号
@@ -53,15 +58,16 @@ public class Client_logic {
 			on.setAllType1(all);
 			break;
 		case "2":
+			name_type = on.getNameType2();
 			all = on.getAllType2() + 1;
 			now = on.getNowType2();
 			on.setAllType2(all);
 			break;
 		case "3":
+			name_type = on.getNameType3();
 			all = on.getAllType3() + 1;
 			now = on.getNowType3();
 			on.setAllType3(all);
-			System.out.println("------------");
 			break;
 		default:
 			return(new JSONObject());
@@ -96,6 +102,32 @@ public class Client_logic {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+//		PushController(all,name_type);
 		return json;
 	}
+	
+	private boolean PushController(int all,String name_type){
+		List<Shop> list = Shop.dao.find("select * from shop where id ="+"\""+shop_id+"\"");
+		List<Ordernum> list1 = Ordernum.dao.find("select * from ordernum where shop_id = "+"\""+shop_id +"\"");
+		try {
+			String token = list.get(0).getShopPushId();
+			System.out.println(token);
+			
+			if(token.equals(null)){
+				return false;
+			}else{
+				Push p = new Push();
+				p.sendAndroidUnicast_server(token,all,type);
+			}
+		} catch (JSONException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return true;
+		
+	}
+	
 }

@@ -97,4 +97,12 @@ public abstract class BaseShop<M extends BaseShop<M>> extends Model<M> implement
 		return get("shop_description");
 	}
 
+	public void setShopPushId(java.lang.String shopPushId) {
+		set("shop_push_id", shopPushId);
+	}
+
+	public java.lang.String getShopPushId() {
+		return get("shop_push_id");
+	}
+
 }

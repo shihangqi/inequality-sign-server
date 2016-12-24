@@ -38,7 +38,7 @@ import com.jfinal.upload.UploadFile;
  */
 @Before(UserInterceptor.class)
 public class UserController extends Controller {
-	public static final String FILEURL = "http://10.7.88.49:8090/upload/";
+	public static final String FILEURL = "http://10.7.88.113:8090/upload/";
 	public void index() {
 		setAttr("userPage", User.dao.paginate(getParaToInt(0, 1), 10));
 		render("user.html");
@@ -121,6 +121,8 @@ public class UserController extends Controller {
 			 if(userid.isEmpty()){
 				 User u = new User();
 				 u.setOpenId(user_id);
+				 u.setUserName("");
+				 u.setUserImg(FILEURL+"touxiang.jpg");
 				 u.save();
 			 }
 			List<User> id = User.dao.find("select * from user where open_id" + "=" + "\"" + user_id + "\"");
@@ -129,9 +131,9 @@ public class UserController extends Controller {
 			} else {
 				System.out.println(id.get(0).getId().toString());
 				renderText(id.get(0).getId().toString());
+				id.get(0).setPushId(push_id);
+				id.get(0).update();
 			}
-			id.get(0).setPushId(push_id);
-			id.get(0).update();
 		} else if (r.getParameter("user_id") == null) {
 			user_tel = r.getParameter("user_tel");//
 			System.out.println(user_tel);
@@ -140,6 +142,8 @@ public class UserController extends Controller {
 			if (userid.isEmpty()) {
 				 User u = new User();
 				 u.setUserTel(user_tel);
+				 u.setUserName("");
+				 u.setUserImg(FILEURL+"touxiang.jpg");
 				 u.save();
 			}
 
@@ -186,7 +190,8 @@ public class UserController extends Controller {
 		String id = this.getPara("id");
 		
 		if(uploadFile == null || id == null){
-			renderText("uploadfail");
+			renderText("changeimgfail");
+			System.out.println("1");
 		}else{
 			List<Img> l = Img.dao.find("select * from img where id =\'1\'");
 			int filenum = l.get(0).getNum();
@@ -194,8 +199,7 @@ public class UserController extends Controller {
 			
 			if(i){
 				String url = FILEURL + "picture"+filenum+".jpg";
-				filenum++;
-				List<User> list = User.dao.find("select * from shop where id ="+"\""+id+"\"");
+				List<User> list = User.dao.find("select * from user where id ="+"\""+id+"\"");
 				list.get(0).setUserImg(url);
 				l.get(0).setNum(filenum);
 				boolean b = list.get(0).update();
@@ -203,12 +207,18 @@ public class UserController extends Controller {
 				if (b == true && b1 == true) {
 					// 更新成功
 					renderText(url);
+					System.out.println("ok");
+					filenum++;
 				} else {
 					// 更新失败
-					renderText("uploadfail");
+					filenum++;
+					System.out.println("fail");
+					renderText("changeimgfail");
 				}
 			}else{
-				renderText("uploadfail");
+				renderText("changeimgfail");
+				filenum++;
+				System.out.println("2");
 			}
 		}
 	}
@@ -243,7 +253,58 @@ public class UserController extends Controller {
 		}
 
 	}
-
+	
+	public void order(){
+		HttpServletRequest r = getRequest();
+		String id = r.getParameter("id");
+		JSONArray json = new JSONArray();
+		List<Record> R = Db.find("select shop.id,shop_img_small,shop_name,num,status,type from shop,ordertab where shop.id = ordertab.shop_id and ordertab.user_id ="+"\'"+id+"\'"+"and status != \'2\' and status != \'3\'"+"order by time DESC");
+		if (R.toString() == "[]" ||R == null){
+			renderText("orderfail");
+		} else {
+			for (int i = 0; i < R.size(); i++) {
+				json.put(R.get(i).getColumns());
+			}
+			renderText(json.toString());
+			System.out.println(json.toString());
+		}
+	
+	}
+	public void deleteorder(){
+		HttpServletRequest r = getRequest();
+		String user_id = r.getParameter("user_id");
+		String shop_id = r.getParameter("shop_id");
+		String type = r.getParameter("type");
+		String num = r.getParameter("num");
+		List<Ordertab> list = Ordertab.dao.find("select * from ordertab where user_id = "+"\""+user_id+"\""+"and shop_id = "+"\""+shop_id+"\""+"and type ="+"\""+type+"\""+"and num ="+"\""+num+"\"");
+		list.get(0).setStatus("3");
+		boolean b = list.get(0).update();
+		if(b == true){
+			renderText("ok");
+			System.out.println("ok");
+		}else{
+			renderText("fail");
+			System.out.println("ok");
+		}
+	}
+	public void cancelorder(){
+		HttpServletRequest r = getRequest();
+		String user_id = r.getParameter("user_id");
+		String shop_id = r.getParameter("shop_id");
+		String type = r.getParameter("type");
+		String num = r.getParameter("num");
+		List<Ordertab> list = Ordertab.dao.find("select * from ordertab where user_id = "+"\""+user_id+"\""+"and shop_id = "+"\""+shop_id+"\""+"and type ="+"\""+type+"\""+"and num ="+"\""+num+"\"");
+		list.get(0).setStatus("2");
+		boolean b = list.get(0).update();
+		if(b == true){
+			renderText("ok");
+			System.out.println("ok");
+		}else{
+			renderText("fail");
+			System.out.println("ok");
+		}
+	}
+	
 	public void inquiry() {
 		HttpServletRequest r = getRequest();
 		String id = r.getParameter("user_id");
